@@ -1,0 +1,101 @@
+name: 'Diff Size'
+description: |
+  This action adds a label to each pull request based on the number of lines changes. The
+  calculation excludes vendored and generated files as indicated by the `.gitattributes` file.
+
+  There is a limit to how much code can be effectively reviewed in a single pull request. A
+  [Smartbear study][1] found that reviewing more than 200-400 lines reduces the ability of reviewers
+  to identify defects. Smaller changes can also support a high deployment frequency, as they are
+  usually less risky and require less effort to qualify.
+
+  To allow better identification of problem pull requests, each pull request is categorised
+  as follows. The thresholds for each category can be adjusted using the action inputs, and the
+  labels are created when the action is run for the first time.
+
+  | Category          | Lines changed | Label      |
+  | ----------------- | ------------- | ---------- |
+  | Extra Small       | 1-10          | `size/XS`  |
+  | Small             | 11-100        | `size/S`   |
+  | Medium            | 101-200       | `size/M`   |
+  | Large             | 201-400       | `size/L`   |
+  | Extra Large       | 401-800       | `size/XL`  |
+  | Extra Extra Large | 801+          | `size/XXL` |
+
+  This size calculation will be the number of lines removed plus the number of lines added. Any
+  files that have been marked as vendored or generated in `.gitattributes` are excluded from the
+  calculation, for example:
+
+  ```
+  vendor/**    linguist-vendored
+  generated/** linguist-generated
+  ```
+
+  More details on `.gitattributes` overrides can be found [here][2]. A file that was newly
+  classified as generated or vendored will be removed from the calculation. Conversely, a modified
+  file that has been unclassified will be included, but only the changed lines will be considered.
+
+  [1]: https://smartbear.com/learn/code-review/best-practices-for-peer-code-review
+  [2]: https://github.com/github-linguist/linguist/blob/main/docs/overrides.md
+
+inputs:
+  xs-threshold:
+    description: 'The maximum number of lines changed for a size/XS label to be assigned (default: 10).'
+    required: true
+    default: '10'
+  s-threshold:
+    description: 'The maximum number of lines changed for a size/S label to be assigned (default: 100).'
+    required: true
+    default: '100'
+  m-threshold:
+    description: 'The maximum number of lines changed for a size/M label to be assigned (default: 200).'
+    required: true
+    default: '200'
+  l-threshold:
+    description: 'The maximum number of lines changed for a size/L label to be assigned (default: 400).'
+    required: true
+    default: '400'
+  xl-threshold:
+    description: 'The maximum number of lines changed for a size/XL label to be assigned (default: 800).'
+    required: true
+    default: '800'
+
+outputs:
+  label:
+    description: 'The label assigned to the pull request.'
+    value: ${{ steps.label.outputs.label }}
+  size:
+    description: 'The calculated size of the pull request's changes.'
+    value: ${{ steps.size.outputs.size }}
+  files:
+    description: 'The files included in the size calculation.'
+    value: ${{ steps.files.outputs.files }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Create labels
+      run: echo "TODO"
+      shell: bash
+
+    - name: Gather files
+      id: files
+      run: echo "files=TODO" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Calculate size
+      id: size
+      run: echo "size=TODO" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Select label
+      id: label
+      run: echo "label=TODO" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Assign label
+      run: echo "TODO"
+      shell: bash
+
+    - name: Cleanup labels
+      run: echo "TODO"
+      shell: bash
