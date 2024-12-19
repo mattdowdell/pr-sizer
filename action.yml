@@ -126,10 +126,35 @@ runs:
 
     - name: Gather files
       id: files
-      run: |
-        git diff origin/${{ github.base_ref }} HEAD --name-only --no-renames | \
-          git check-attr --stdin linguist-generated linguist-vendored
-      shell: bash
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      with:
+        script: |
+          let files = '';
+          await exec.exec(
+            'git',
+            ['diff', 'origin/${{ github.base_ref }}', 'HEAD', '--name-only', '--no-renames'],
+            {
+              listeners: {
+                stdout: (data: Buffer) => {
+                  files += data.toString();
+                },
+              }
+            },
+          );
+          console.log(files);
+
+          let attrs = '';
+          await exec.exec(
+            'git',
+            ['check-attr', 'linguist-generated', 'linguist-vendored', '--', files],
+            {
+              listeners: {
+                stdout: (data: Buffer) => {
+                  attrs += data.toString();
+                },
+              }
+            },
+          );
 
     - name: Calculate size
       id: size
