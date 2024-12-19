@@ -82,14 +82,14 @@ runs:
             repo: context.repo.repo,
           });
 
-          const have = new Set(labels.map((l) => l.name));
+          const have = labels.map((l) => l.name);
           console.log(have);
 
-          const want = new Set(['size/XS', 'size/S', 'size/M', 'size/L', 'size/XL', 'size/XXL']);
+          const want = ['size/XS', 'size/S', 'size/M', 'size/L', 'size/XL', 'size/XXL'];
           console.log(want);
 
-          const diff = want.difference(have);
-          console.log(diff);
+          const missing = want.filter((l) => !have.has(l));
+          console.log(missing);
 
     - name: Gather files
       id: files
