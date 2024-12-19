@@ -117,7 +117,7 @@ runs:
           console.log(missing);
 
           for (label of missing) {
-            await octokit.rest.issues.createLabel({
+            await github.rest.issues.createLabel({
               owner: context.repo.owner,
               repo: context.repo.repo,
               name: label.name,
