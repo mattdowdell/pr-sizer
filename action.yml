@@ -66,9 +66,9 @@ outputs:
   size:
     description: "The calculated size of the pull request's changes."
     value: ${{ steps.size.outputs.size }}
-  files:
-    description: "The files included in the size calculation."
-    value: ${{ steps.files.outputs.files }}
+  excludes:
+    description: "The files excluded from the size calculation."
+    value: ${{ steps.excludes.outputs.excludes }}
 
 runs:
   using: "composite"
@@ -157,15 +157,15 @@ runs:
             },
           );
 
-          let modified = new Set();
+          let excludes = new Set();
           for (entry of attrs.split(/\r?\n/)) {
             if (entry.endsWith(': set')) {
-              modified.add(entry.split(':')[0])
+              excludes.add(entry.split(':')[0])
             }
           }
 
-          console.log(modified);
-          core.setOutput('files', [...modified].join(' '));
+          console.log(excludes);
+          core.setOutput('excludes', [...excludes].join(' '));
 
     - name: Calculate size
       id: size
