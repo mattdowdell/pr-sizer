@@ -141,7 +141,7 @@ runs:
               }
             },
           );
-          const files = names.split(/\r?\n/);
+          const files = names.split(/\r?\n/).filter((n) => n.length > 0);
           console.log(files);
 
           let attrs = '';
