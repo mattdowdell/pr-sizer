@@ -20,4 +20,11 @@ jobs:
           fetch-depth: 0
 
       - name: Diff Size
+        id: diff-size
         uses: ./
+
+      - name: Read outputs
+        run: |
+          echo label=${{ steps.diff-size.outputs.label }}
+          echo size=${{ steps.diff-size.outputs.size }}
+          echo excludes=${{ steps.diff-size.outputs.excludes }}

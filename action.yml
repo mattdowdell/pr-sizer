@@ -66,9 +66,9 @@ outputs:
   size:
     description: "The calculated size of the pull request's changes."
     value: ${{ steps.size.outputs.size }}
-  files:
-    description: "The files included in the size calculation."
-    value: ${{ steps.files.outputs.files }}
+  excludes:
+    description: "The files excluded from the size calculation."
+    value: ${{ steps.excludes.outputs.excludes }}
 
 runs:
   using: "composite"
@@ -113,7 +113,7 @@ runs:
           const missing = want.filter((l) => !have.has(l.name));
 
           for (label of missing) {
-            console.debug(`creating label: ${label.name}`);
+            core.debug(`creating label: ${label.name}`);
 
             await github.rest.issues.createLabel({
               owner: context.repo.owner,
@@ -124,10 +124,47 @@ runs:
             });
           }
 
-    - name: Gather files
-      id: files
-      run: echo "files=TODO" >> $GITHUB_OUTPUT
-      shell: bash
+    - name: Gather excludes
+      id: excludes
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      with:
+        script: |
+          let names = '';
+          await exec.exec(
+            'git',
+            ['diff', 'origin/${{ github.base_ref }}', 'HEAD', '--name-only', '--no-renames'],
+            {
+              listeners: {
+                stdout: (data) => {
+                  names += data.toString();
+                },
+              }
+            },
+          );
+
+          const files = names.split(/\r?\n/).filter((n) => n.length > 0);
+
+          let attrs = '';
+          await exec.exec(
+            'git',
+            ['check-attr', 'linguist-generated', 'linguist-vendored', '--', ...files],
+            {
+              listeners: {
+                stdout: (data) => {
+                  attrs += data.toString();
+                },
+              }
+            },
+          );
+
+          let excludes = new Set();
+          for (entry of attrs.split(/\r?\n/)) {
+            if (entry.endsWith(': set')) {
+              excludes.add(entry.split(':')[0])
+            }
+          }
+
+          core.setOutput('excludes', [...excludes].join(' '));
 
     - name: Calculate size
       id: size
