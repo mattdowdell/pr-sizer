@@ -9,8 +9,8 @@ description: |
   usually less risky and require less effort to qualify.
 
   To allow better identification of problem pull requests, each pull request is categorised
-  as follows. The thresholds for each category can be adjusted using the action inputs, and the
-  labels are created when the action is run for the first time.
+  as follows. The thresholds for each category and the label names can be adjusted using the action
+  inputs. The labels will be created when the action is run for the first time.
 
   | Category          | Lines changed | Label      |
   | ----------------- | ------------- | ---------- |
