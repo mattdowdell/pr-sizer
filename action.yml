@@ -194,6 +194,9 @@ runs:
       id: size
       run: |
         git diff origin/${{ github.base_ref }} HEAD --numstat --ignore-space-change -- \
+          . ${{ steps.excludes.outputs.excludes }}
+
+        git diff origin/${{ github.base_ref }} HEAD --numstat --ignore-space-change -- \
           . ${{ steps.excludes.outputs.excludes }} | \
           awk '{sum += $1 + $2} END {print sum}'
       shell: bash
