@@ -86,7 +86,7 @@ runs:
           const want = [
             {
               name: 'size/XS',
-              description: 'Pull requests with an very small number of lines changed.',
+              description: 'Pull requests with a very small number of lines changed.',
             },
             {
               name: 'size/S',
@@ -102,18 +102,19 @@ runs:
             },
             {
               name: 'size/XL',
-              description: 'Pull requests with an very large number of lines changed.',
+              description: 'Pull requests with a very large number of lines changed.',
             },
             {
               name: 'size/XXL',
-              description: 'Pull requests with an very, very large number of lines changed.',
+              description: 'Pull requests with a very, very large number of lines changed.',
             },
           ];
 
           const missing = want.filter((l) => !have.has(l.name));
 
           for (label of missing) {
-            console.log(`Creating label ${label.name}`);
+            console.debug(`creating label: ${label.name}`);
+
             await github.rest.issues.createLabel({
               owner: context.repo.owner,
               repo: context.repo.repo,
