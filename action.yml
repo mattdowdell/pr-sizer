@@ -205,7 +205,7 @@ runs:
             },
           );
 
-          const data = changed.split(/\r?\n/).map((c) => {
+          const data = changed.split(/\r?\n/).filter(c => c.length > 0).map((c) => {
             const parts = c.split(/\s+/);
             return {
               added: parseInt(parts[0]),
