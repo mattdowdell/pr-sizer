@@ -276,7 +276,7 @@ runs:
             '${{ inputs.xxl-label }}',
           ]);
 
-          const size = '{{ steps.label.outputs.label }}';
+          const size = '${{ steps.label.outputs.label }}';
           sizes.delete(size);
 
           if (!assigned.has(size)) {
