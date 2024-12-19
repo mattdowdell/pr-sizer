@@ -142,12 +142,12 @@ runs:
             },
           );
           const files = names.split(/\r?\n/);
-          console.log(names);
+          console.log(files);
 
           let attrs = '';
           await exec.exec(
             'git',
-            ['check-attr', 'linguist-generated', 'linguist-vendored', '--', ...names],
+            ['check-attr', 'linguist-generated', 'linguist-vendored', '--', ...files],
             {
               listeners: {
                 stdout: (data) => {
