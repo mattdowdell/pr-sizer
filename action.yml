@@ -9,8 +9,8 @@ description: |
   usually less risky and require less effort to qualify.
 
   To allow better identification of problem pull requests, each pull request is categorised
-  as follows. The thresholds for each category can be adjusted using the action inputs, and the
-  labels are created when the action is run for the first time.
+  as follows. The thresholds for each category and the label names can be adjusted using the action
+  inputs. The labels will be created when the action is run for the first time.
 
   | Category          | Lines changed | Label      |
   | ----------------- | ------------- | ---------- |
@@ -39,25 +39,49 @@ description: |
 
 inputs:
   xs-threshold:
-    description: "The maximum number of lines changed for a size/XS label to be assigned (default: 10)."
+    description: "The maximum number of lines changed for an extra small label to be assigned (default: 10)."
     required: true
     default: "10"
   s-threshold:
-    description: "The maximum number of lines changed for a size/S label to be assigned (default: 100)."
+    description: "The maximum number of lines changed for a small label to be assigned (default: 100)."
     required: true
     default: "100"
   m-threshold:
-    description: "The maximum number of lines changed for a size/M label to be assigned (default: 200)."
+    description: "The maximum number of lines changed for a medium label to be assigned (default: 200)."
     required: true
     default: "200"
   l-threshold:
-    description: "The maximum number of lines changed for a size/L label to be assigned (default: 400)."
+    description: "The maximum number of lines changed for a large label to be assigned (default: 400)."
     required: true
     default: "400"
   xl-threshold:
-    description: "The maximum number of lines changed for a size/XL label to be assigned (default: 800)."
+    description: "The maximum number of lines changed for a extra large label to be assigned (default: 800)."
     required: true
     default: "800"
+  xs-label:
+    description: "The name of the label for very small number of lines changed."
+    required: true
+    default: "size/XS"
+  s-label:
+    description: "The name of the label for small number of lines changed."
+    required: true
+    default: "size/S"
+  m-label:
+    description: "The name of the label for medium number of lines changed."
+    required: true
+    default: "size/M"
+  l-label:
+    description: "The name of the label for large number of lines changed."
+    required: true
+    default: "size/L"
+  xl-label:
+    description: "The name of the label for very large number of lines changed."
+    required: true
+    default: "size/XL"
+  xxl-label:
+    description: "The name of the label for very, very large number of lines changed."
+    required: true
+    default: "size/XXL"
 
 outputs:
   label:
@@ -85,27 +109,27 @@ runs:
           const have = new Set(labels.data.map((l) => l.name));
           const want = [
             {
-              name: 'size/XS',
+              name: '${{ inputs.xs-label }}',
               description: 'Pull requests with a very small number of lines changed.',
             },
             {
-              name: 'size/S',
+              name: '${{ inputs.s-label }}',
               description: 'Pull requests with a small number of lines changed.',
             },
             {
-              name: 'size/M',
+              name: '${{ inputs.m-label }}',
               description: 'Pull requests with a medium number of lines changed.',
             },
             {
-              name: 'size/L',
+              name: '${{ inputs.l-label }}',
               description: 'Pull requests with a large number of lines changed.',
             },
             {
-              name: 'size/XL',
+              name: '${{ inputs.xl-label }}',
               description: 'Pull requests with a very large number of lines changed.',
             },
             {
-              name: 'size/XXL',
+              name: '${{ inputs.xxl-label }}',
               description: 'Pull requests with a very, very large number of lines changed.',
             },
           ];
