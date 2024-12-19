@@ -127,7 +127,7 @@ runs:
     - name: Gather files
       id: files
       run: |
-        git diff origin/${{ github.base_ref }} ${{ github.head_ref }} --name-only --no-renames | \
+        git diff origin/${{ github.base_ref }} HEAD --name-only --no-renames | \
           git check-attr --stdin linguist-generated linguist-vendored
       shell: bash
 
