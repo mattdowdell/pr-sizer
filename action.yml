@@ -136,7 +136,7 @@ runs:
             {
               listeners: {
                 stdout: (data) => {
-                  files += data.toString();
+                  names += data.toString();
                 },
               }
             },
