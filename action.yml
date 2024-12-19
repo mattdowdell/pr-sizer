@@ -257,9 +257,48 @@ runs:
           core.setOutput('label', label);
 
     - name: Assign label
-      run: echo "TODO"
-      shell: bash
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      with:
+        script: |
+          const labels = await github.rest.issues.listLabelsOnIssue({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          });
 
-    - name: Cleanup labels
-      run: echo "TODO"
-      shell: bash
+          const assigned = new Set(labels.data.map(l => l.name));
+          const sizes = new Set([
+            '${{ inputs.xs-label }}',
+            '${{ inputs.s-label }}',
+            '${{ inputs.m-label }}',
+            '${{ inputs.l-label }}',
+            '${{ inputs.xl-label }}',
+            '${{ inputs.xxl-label }}',
+          ]);
+
+          const size = '${{ steps.label.outputs.label }}';
+          sizes.delete(size);
+
+          if (!assigned.has(size)) {
+            console.debug(`adding label: ${size}`);
+
+            github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: [size],
+            })
+          }
+
+          for (const s of sizes) {
+            if (assigned.has(s)) {
+              console.debug(`removing label: ${s}`);
+
+              github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                name: s,
+              });
+            }
+          }
