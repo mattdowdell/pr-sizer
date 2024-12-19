@@ -190,7 +190,6 @@ runs:
       with:
         script: |
           const excludes = '${{ steps.excludes.outputs.excludes }}'.split(' ').filter(e => e.length > 0);
-          console.log(excludes);
 
           let changed = ''
           await exec.exec(
@@ -213,8 +212,6 @@ runs:
               name: parts[2],
             };
           });
-
-          console.log(data);
 
           const size = data.reduce((total, d) => total + d.added + d.removed, 0);
           core.setOutput('size', size);
