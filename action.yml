@@ -85,11 +85,46 @@ runs:
           const have = new Set(labels.data.map((l) => l.name));
           console.log(have);
 
-          const want = ['size/XS', 'size/S', 'size/M', 'size/L', 'size/XL', 'size/XXL'];
+          const want = [
+            {
+              name: 'size/XS',
+              description: 'Pull requests with an extra small number of lines changed.',
+            },
+            {
+              name: 'size/S',
+              description: 'Pull requests with a small number of lines changed.',
+            },
+            {
+              name: 'size/M',
+              description: 'Pull requests with a medium number of lines changed.',
+            },
+            {
+              name: 'size/L',
+              description: 'Pull requests with a large number of lines changed.',
+            },
+            {
+              name: 'size/XL',
+              description: 'Pull requests with an extra large number of lines changed.',
+            },
+            {
+              name: 'size/XXL',
+              description: 'Pull requests with an extra extra large number of lines changed.',
+            },
+          ];
           console.log(want);
 
-          const missing = want.filter((l) => !have.has(l));
+          const missing = want.filter((l) => !have.has(l.name));
           console.log(missing);
+
+          for (label of missing) {
+            await octokit.rest.issues.createLabel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: label.name,
+              color: '4f348b',
+              description: label.description,
+            });
+          }
 
     - name: Gather files
       id: files
