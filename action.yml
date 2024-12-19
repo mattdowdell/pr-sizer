@@ -82,7 +82,7 @@ runs:
             repo: context.repo.repo,
           });
 
-          const have = labels.data.map((l) => l.name);
+          const have = new Set(labels.data.map((l) => l.name));
           console.log(have);
 
           const want = ['size/XS', 'size/S', 'size/M', 'size/L', 'size/XL', 'size/XXL'];
