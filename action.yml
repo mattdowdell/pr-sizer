@@ -290,6 +290,7 @@ runs:
             })
           }
 
+          /*
           for (const s of sizes) {
             if (assigned.has(s)) {
               console.debug(`removing label: ${s}`);
@@ -302,3 +303,4 @@ runs:
               });
             }
           }
+          */
