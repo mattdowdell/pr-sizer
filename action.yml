@@ -1,4 +1,4 @@
-name: 'Diff Size'
+name: "Diff Size"
 description: |
   This action adds a label to each pull request based on the number of lines changes. The
   calculation excludes vendored and generated files as indicated by the `.gitattributes` file.
@@ -39,35 +39,35 @@ description: |
 
 inputs:
   xs-threshold:
-    description: 'The maximum number of lines changed for a size/XS label to be assigned (default: 10).'
+    description: "The maximum number of lines changed for a size/XS label to be assigned (default: 10)."
     required: true
-    default: '10'
+    default: "10"
   s-threshold:
-    description: 'The maximum number of lines changed for a size/S label to be assigned (default: 100).'
+    description: "The maximum number of lines changed for a size/S label to be assigned (default: 100)."
     required: true
-    default: '100'
+    default: "100"
   m-threshold:
-    description: 'The maximum number of lines changed for a size/M label to be assigned (default: 200).'
+    description: "The maximum number of lines changed for a size/M label to be assigned (default: 200)."
     required: true
-    default: '200'
+    default: "200"
   l-threshold:
-    description: 'The maximum number of lines changed for a size/L label to be assigned (default: 400).'
+    description: "The maximum number of lines changed for a size/L label to be assigned (default: 400)."
     required: true
-    default: '400'
+    default: "400"
   xl-threshold:
-    description: 'The maximum number of lines changed for a size/XL label to be assigned (default: 800).'
+    description: "The maximum number of lines changed for a size/XL label to be assigned (default: 800)."
     required: true
-    default: '800'
+    default: "800"
 
 outputs:
   label:
-    description: 'The label assigned to the pull request.'
+    description: "The label assigned to the pull request."
     value: ${{ steps.label.outputs.label }}
   size:
-    description: 'The calculated size of the pull request's changes.'
+    description: "The calculated size of the pull request's changes."
     value: ${{ steps.size.outputs.size }}
   files:
-    description: 'The files included in the size calculation.'
+    description: "The files included in the size calculation."
     value: ${{ steps.files.outputs.files }}
 
 runs:
