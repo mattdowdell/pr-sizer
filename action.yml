@@ -166,7 +166,7 @@ runs:
             },
           );
 
-          const files = names.split(/\r?\n/).filter(n => n.length > 0);
+          const files = names.split(/\r?\n/).filter((n) => n.length > 0);
 
           let attrs = '';
           await exec.exec(
@@ -181,7 +181,7 @@ runs:
             },
           );
 
-          let excludes = new Set(attrs.split(/\r?\n/).filter(e => e.endsWith(': set')).map(e => e.split(':')[0]);
+          let excludes = new Set(attrs.split(/\r?\n/).filter((e) => e.endsWith(': set')).map((e) => e.split(':')[0]);
           core.setOutput('excludes', [...excludes].join(' '));
 
     - name: Calculate size
@@ -204,7 +204,7 @@ runs:
             },
           );
 
-          const data = changed.split(/\r?\n/).map(c => {
+          const data = changed.split(/\r?\n/).map((c) => {
             const parts = c.split(/\s+/);
             return {
               added: parseInt(parts[0]),
