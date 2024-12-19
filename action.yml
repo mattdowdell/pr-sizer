@@ -1,41 +1,5 @@
 name: "Diff Size"
-description: |
-  This action adds a label to each pull request based on the number of lines changes. The
-  calculation excludes vendored and generated files as indicated by the `.gitattributes` file.
-
-  There is a limit to how much code can be effectively reviewed in a single pull request. A
-  [Smartbear study][1] found that reviewing more than 200-400 lines reduces the ability of reviewers
-  to identify defects. Smaller changes can also support a high deployment frequency, as they are
-  usually less risky and require less effort to qualify.
-
-  To allow better identification of problem pull requests, each pull request is categorised
-  as follows. The thresholds for each category and the label names can be adjusted using the action
-  inputs. The labels will be created when the action is run for the first time.
-
-  | Category          | Lines changed | Label      |
-  | ----------------- | ------------- | ---------- |
-  | Extra Small       | 1-10          | `size/XS`  |
-  | Small             | 11-100        | `size/S`   |
-  | Medium            | 101-200       | `size/M`   |
-  | Large             | 201-400       | `size/L`   |
-  | Extra Large       | 401-800       | `size/XL`  |
-  | Extra Extra Large | 801+          | `size/XXL` |
-
-  This size calculation will be the number of lines removed plus the number of lines added. Any
-  files that have been marked as vendored or generated in `.gitattributes` are excluded from the
-  calculation, for example:
-
-  ```
-  vendor/**    linguist-vendored
-  generated/** linguist-generated
-  ```
-
-  More details on `.gitattributes` overrides can be found [here][2]. A file that was newly
-  classified as generated or vendored will be removed from the calculation. Conversely, a modified
-  file that has been unclassified will be included, but only the changed lines will be considered.
-
-  [1]: https://smartbear.com/learn/code-review/best-practices-for-peer-code-review
-  [2]: https://github.com/github-linguist/linguist/blob/main/docs/overrides.md
+description: Adds a label to each pull request based on the number of lines changed.
 
 inputs:
   xs-threshold:
@@ -86,219 +50,221 @@ inputs:
 outputs:
   label:
     description: "The label assigned to the pull request."
-    value: ${{ steps.label.outputs.label }}
   size:
     description: "The calculated size of the pull request's changes."
-    value: ${{ steps.size.outputs.size }}
+  includes:
+    description: "The files included in the size calculation."
   excludes:
     description: "The files excluded from the size calculation."
-    value: ${{ steps.excludes.outputs.excludes }}
 
 runs:
-  using: "composite"
-  steps:
-    - name: Create labels
-      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-      with:
-        script: |
-          const labels = await github.rest.issues.listLabelsForRepo({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-          });
+  using: "node20"
+  main: "index.js"
 
-          const have = new Set(labels.data.map((l) => l.name));
-          const want = [
-            {
-              name: '${{ inputs.xs-label }}',
-              description: 'Pull requests with a very small number of lines changed.',
-            },
-            {
-              name: '${{ inputs.s-label }}',
-              description: 'Pull requests with a small number of lines changed.',
-            },
-            {
-              name: '${{ inputs.m-label }}',
-              description: 'Pull requests with a medium number of lines changed.',
-            },
-            {
-              name: '${{ inputs.l-label }}',
-              description: 'Pull requests with a large number of lines changed.',
-            },
-            {
-              name: '${{ inputs.xl-label }}',
-              description: 'Pull requests with a very large number of lines changed.',
-            },
-            {
-              name: '${{ inputs.xxl-label }}',
-              description: 'Pull requests with a very, very large number of lines changed.',
-            },
-          ];
+  # using: "composite"
+  # steps:
+  #   - name: Create labels
+  #     uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+  #     with:
+  #       script: |
+  #         const labels = await github.rest.issues.listLabelsForRepo({
+  #           owner: context.repo.owner,
+  #           repo: context.repo.repo,
+  #         });
 
-          const missing = want.filter(l => !have.has(l.name));
+  #         const have = new Set(labels.data.map((l) => l.name));
+  #         const want = [
+  #           {
+  #             name: '${{ inputs.xs-label }}',
+  #             description: 'Pull requests with a very small number of lines changed.',
+  #           },
+  #           {
+  #             name: '${{ inputs.s-label }}',
+  #             description: 'Pull requests with a small number of lines changed.',
+  #           },
+  #           {
+  #             name: '${{ inputs.m-label }}',
+  #             description: 'Pull requests with a medium number of lines changed.',
+  #           },
+  #           {
+  #             name: '${{ inputs.l-label }}',
+  #             description: 'Pull requests with a large number of lines changed.',
+  #           },
+  #           {
+  #             name: '${{ inputs.xl-label }}',
+  #             description: 'Pull requests with a very large number of lines changed.',
+  #           },
+  #           {
+  #             name: '${{ inputs.xxl-label }}',
+  #             description: 'Pull requests with a very, very large number of lines changed.',
+  #           },
+  #         ];
 
-          for (label of missing) {
-            core.debug(`creating label: ${label.name}`);
+  #         const missing = want.filter(l => !have.has(l.name));
 
-            await github.rest.issues.createLabel({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: label.name,
-              color: '4f348b',
-              description: label.description,
-            });
-          }
+  #         for (label of missing) {
+  #           core.debug(`creating label: ${label.name}`);
 
-    - name: Gather excludes
-      id: excludes
-      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-      with:
-        script: |
-          let names = '';
-          await exec.exec(
-            'git',
-            ['diff', 'origin/${{ github.base_ref }}', 'HEAD', '--name-only', '--no-renames'],
-            {
-              listeners: {
-                stdout: (data) => {
-                  names += data.toString();
-                },
-              }
-            },
-          );
+  #           await github.rest.issues.createLabel({
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             name: label.name,
+  #             color: '4f348b',
+  #             description: label.description,
+  #           });
+  #         }
 
-          const files = names.split(/\r?\n/).filter(n => n.length > 0);
+  #   - name: Gather excludes
+  #     id: excludes
+  #     uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+  #     with:
+  #       script: |
+  #         let names = '';
+  #         await exec.exec(
+  #           'git',
+  #           ['diff', 'origin/${{ github.base_ref }}', 'HEAD', '--name-only', '--no-renames'],
+  #           {
+  #             listeners: {
+  #               stdout: (data) => {
+  #                 names += data.toString();
+  #               },
+  #             }
+  #           },
+  #         );
 
-          let attrs = '';
-          await exec.exec(
-            'git',
-            ['check-attr', 'linguist-generated', 'linguist-vendored', '--', ...files],
-            {
-              listeners: {
-                stdout: (data) => {
-                  attrs += data.toString();
-                },
-              }
-            },
-          );
+  #         const files = names.split(/\r?\n/).filter(n => n.length > 0);
 
-          let excludes = new Set(attrs.split(/\r?\n/).filter(e => e.endsWith(': set')).map(e => e.split(':')[0]));
-          core.setOutput('excludes', [...excludes].join(' '));
+  #         let attrs = '';
+  #         await exec.exec(
+  #           'git',
+  #           ['check-attr', 'linguist-generated', 'linguist-vendored', '--', ...files],
+  #           {
+  #             listeners: {
+  #               stdout: (data) => {
+  #                 attrs += data.toString();
+  #               },
+  #             }
+  #           },
+  #         );
 
-    - name: Calculate size
-      id: size
-      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-      with:
-        script: |
-          const excludes = '${{ steps.excludes.outputs.excludes }}'.split(' ').filter(e => e.length > 0);
+  #         let excludes = new Set(attrs.split(/\r?\n/).filter(e => e.endsWith(': set')).map(e => e.split(':')[0]));
+  #         core.setOutput('excludes', [...excludes].join(' '));
 
-          let changed = ''
-          await exec.exec(
-            'git',
-            ['diff', 'origin/${{ github.base_ref }}', 'HEAD', '--numstat', '--ignore-space-change', '--', '.', ...excludes],
-            {
-              listeners: {
-                stdout: (data) => {
-                  changed += data.toString();
-                },
-              }
-            },
-          );
+  #   - name: Calculate size
+  #     id: size
+  #     uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+  #     with:
+  #       script: |
+  #         const excludes = '${{ steps.excludes.outputs.excludes }}'.split(' ').filter(e => e.length > 0);
 
-          const data = changed.split(/\r?\n/).filter(c => c.length > 0).map((c) => {
-            const parts = c.split(/\s+/);
-            return {
-              added: parseInt(parts[0]),
-              removed: parseInt(parts[1]),
-              name: parts[2],
-            };
-          });
+  #         let changed = ''
+  #         await exec.exec(
+  #           'git',
+  #           ['diff', 'origin/${{ github.base_ref }}', 'HEAD', '--numstat', '--ignore-space-change', '--', '.', ...excludes],
+  #           {
+  #             listeners: {
+  #               stdout: (data) => {
+  #                 changed += data.toString();
+  #               },
+  #             }
+  #           },
+  #         );
 
-          const size = data.reduce((total, d) => total + d.added + d.removed, 0);
-          core.setOutput('size', size);
+  #         const data = changed.split(/\r?\n/).filter(c => c.length > 0).map((c) => {
+  #           const parts = c.split(/\s+/);
+  #           return {
+  #             added: parseInt(parts[0]),
+  #             removed: parseInt(parts[1]),
+  #             name: parts[2],
+  #           };
+  #         });
 
-    - name: Select label
-      id: label
-      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-      with:
-        script: |
-          const size = parseInt('${{ steps.size.outputs.size }}');
-          const thresholds = [
-            {
-              label: '${{ inputs.xs-label }}',
-              max: parseInt('${{ inputs.xs-threshold }}'),
-            },
-            {
-              label: '${{ inputs.s-label }}',
-              max: parseInt('${{ inputs.s-threshold }}'),
-            },
-            {
-              label: '${{ inputs.m-label }}',
-              max: parseInt('${{ inputs.m-threshold }}'),
-            },
-            {
-              label: '${{ inputs.l-label }}',
-              max: parseInt('${{ inputs.l-threshold }}'),
-            },
-            {
-              label: '${{ inputs.xl-label }}',
-              max: parseInt('${{ inputs.xl-threshold }}'),
-            },
-          ];
+  #         const size = data.reduce((total, d) => total + d.added + d.removed, 0);
+  #         core.setOutput('size', size);
 
-          let label = '${{ inputs.xxl-label }}';
+  #   - name: Select label
+  #     id: label
+  #     uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+  #     with:
+  #       script: |
+  #         const size = parseInt('${{ steps.size.outputs.size }}');
+  #         const thresholds = [
+  #           {
+  #             label: '${{ inputs.xs-label }}',
+  #             max: parseInt('${{ inputs.xs-threshold }}'),
+  #           },
+  #           {
+  #             label: '${{ inputs.s-label }}',
+  #             max: parseInt('${{ inputs.s-threshold }}'),
+  #           },
+  #           {
+  #             label: '${{ inputs.m-label }}',
+  #             max: parseInt('${{ inputs.m-threshold }}'),
+  #           },
+  #           {
+  #             label: '${{ inputs.l-label }}',
+  #             max: parseInt('${{ inputs.l-threshold }}'),
+  #           },
+  #           {
+  #             label: '${{ inputs.xl-label }}',
+  #             max: parseInt('${{ inputs.xl-threshold }}'),
+  #           },
+  #         ];
 
-          for (t of thresholds) {
-            if (t.max > size) {
-              label = t.label;
-              break;
-            }
-          }
+  #         let label = '${{ inputs.xxl-label }}';
 
-          core.setOutput('label', label);
+  #         for (t of thresholds) {
+  #           if (t.max > size) {
+  #             label = t.label;
+  #             break;
+  #           }
+  #         }
 
-    - name: Assign label
-      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-      with:
-        script: |
-          const labels = await github.rest.issues.listLabelsOnIssue({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            issue_number: context.issue.number,
-          });
+  #         core.setOutput('label', label);
 
-          const assigned = new Set(labels.data.map(l => l.name));
-          const sizes = new Set([
-            '${{ inputs.xs-label }}',
-            '${{ inputs.s-label }}',
-            '${{ inputs.m-label }}',
-            '${{ inputs.l-label }}',
-            '${{ inputs.xl-label }}',
-            '${{ inputs.xxl-label }}',
-          ]);
+  #   - name: Assign label
+  #     uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+  #     with:
+  #       script: |
+  #         const labels = await github.rest.issues.listLabelsOnIssue({
+  #           owner: context.repo.owner,
+  #           repo: context.repo.repo,
+  #           issue_number: context.issue.number,
+  #         });
 
-          const size = '${{ steps.label.outputs.label }}';
-          sizes.delete(size);
+  #         const assigned = new Set(labels.data.map(l => l.name));
+  #         const sizes = new Set([
+  #           '${{ inputs.xs-label }}',
+  #           '${{ inputs.s-label }}',
+  #           '${{ inputs.m-label }}',
+  #           '${{ inputs.l-label }}',
+  #           '${{ inputs.xl-label }}',
+  #           '${{ inputs.xxl-label }}',
+  #         ]);
 
-          if (!assigned.has(size)) {
-            console.debug(`adding label: ${size}`);
+  #         const size = '${{ steps.label.outputs.label }}';
+  #         sizes.delete(size);
 
-            github.rest.issues.addLabels({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              labels: [size],
-            })
-          }
+  #         if (!assigned.has(size)) {
+  #           console.debug(`adding label: ${size}`);
 
-          for (const s of sizes) {
-            if (assigned.has(s)) {
-              console.debug(`removing label: ${s}`);
+  #           github.rest.issues.addLabels({
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             issue_number: context.issue.number,
+  #             labels: [size],
+  #           })
+  #         }
 
-              github.rest.issues.removeLabel({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                name: s,
-              });
-            }
-          }
+  #         for (const s of sizes) {
+  #           if (assigned.has(s)) {
+  #             console.debug(`removing label: ${s}`);
+
+  #             github.rest.issues.removeLabel({
+  #               owner: context.repo.owner,
+  #               repo: context.repo.repo,
+  #               issue_number: context.issue.number,
+  #               name: s,
+  #             });
+  #           }
+  #         }
