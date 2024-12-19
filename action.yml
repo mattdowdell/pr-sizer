@@ -124,8 +124,8 @@ runs:
             });
           }
 
-    - name: Gather files
-      id: files
+    - name: Gather excludes
+      id: excludes
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
       with:
         script: |
@@ -141,8 +141,8 @@ runs:
               }
             },
           );
+
           const files = names.split(/\r?\n/).filter((n) => n.length > 0);
-          console.log(files);
 
           let attrs = '';
           await exec.exec(
@@ -164,7 +164,6 @@ runs:
             }
           }
 
-          console.log(excludes);
           core.setOutput('excludes', [...excludes].join(' '));
 
     - name: Calculate size
