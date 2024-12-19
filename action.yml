@@ -261,5 +261,9 @@ runs:
       with:
         script: |
           console.log(context.issue);
-          const labels = await github.rest.issues.listLabelsOnIssue(context.issue);
+          const labels = await github.rest.issues.listLabelsOnIssue({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          });
           console.log(labels);
