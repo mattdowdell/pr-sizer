@@ -134,7 +134,7 @@ runs:
             },
           ];
 
-          const missing = want.filter((l) => !have.has(l.name));
+          const missing = want.filter(l => !have.has(l.name));
 
           for (label of missing) {
             core.debug(`creating label: ${label.name}`);
@@ -166,7 +166,7 @@ runs:
             },
           );
 
-          const files = names.split(/\r?\n/).filter((n) => n.length > 0);
+          const files = names.split(/\r?\n/).filter(n => n.length > 0);
 
           let attrs = '';
           await exec.exec(
@@ -181,19 +181,40 @@ runs:
             },
           );
 
-          let excludes = new Set();
-          for (entry of attrs.split(/\r?\n/)) {
-            if (entry.endsWith(': set')) {
-              excludes.add(entry.split(':')[0])
-            }
-          }
-
+          let excludes = new Set(attrs.split(/\r?\n/).filter(e => e.endsWith(': set')).map(e => e.split(':')[0]));
           core.setOutput('excludes', [...excludes].join(' '));
 
     - name: Calculate size
       id: size
-      run: echo "size=TODO" >> $GITHUB_OUTPUT
-      shell: bash
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      with:
+        script: |
+          const excludes = '${{ steps.excludes.outputs.excludes }}'.split(' ').filter(e => e.length > 0);
+
+          let changed = ''
+          await exec.exec(
+            'git',
+            ['diff', 'origin/${{ github.base_ref }}', 'HEAD', '--numstat', '--ignore-space-change', '--', '.', ...excludes],
+            {
+              listeners: {
+                stdout: (data) => {
+                  changed += data.toString();
+                },
+              }
+            },
+          );
+
+          const data = changed.split(/\r?\n/).filter(c => c.length > 0).map((c) => {
+            const parts = c.split(/\s+/);
+            return {
+              added: parseInt(parts[0]),
+              removed: parseInt(parts[1]),
+              name: parts[2],
+            };
+          });
+
+          const size = data.reduce((total, d) => total + d.added + d.removed, 0);
+          core.setOutput('size', size);
 
     - name: Select label
       id: label
