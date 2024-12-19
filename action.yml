@@ -113,7 +113,7 @@ runs:
           const missing = want.filter((l) => !have.has(l.name));
 
           for (label of missing) {
-            console.debug(`creating label: ${label.name}`);
+            core.debug(`creating label: ${label.name}`);
 
             await github.rest.issues.createLabel({
               owner: context.repo.owner,
@@ -156,6 +156,15 @@ runs:
               }
             },
           );
+
+          let modified = new Set();
+          for (entry of attrs.split(/\r?\n/)) {
+            if (entry.endsWith(': set')) {
+              modified.add(entry.split(':')[0])
+            }
+          }
+
+          console.log(modified);
 
     - name: Calculate size
       id: size
