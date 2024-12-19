@@ -135,7 +135,7 @@ runs:
             ['diff', 'origin/${{ github.base_ref }}', 'HEAD', '--name-only', '--no-renames'],
             {
               listeners: {
-                stdout: (data: Buffer) => {
+                stdout: (data) => {
                   files += data.toString();
                 },
               }
@@ -149,7 +149,7 @@ runs:
             ['check-attr', 'linguist-generated', 'linguist-vendored', '--', files],
             {
               listeners: {
-                stdout: (data: Buffer) => {
+                stdout: (data) => {
                   attrs += data.toString();
                 },
               }
