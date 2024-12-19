@@ -81,7 +81,16 @@ runs:
             owner: context.repo.owner,
             repo: context.repo.repo,
           });
-          console.log(labels);
+
+          const have = new Set();
+          for (label of labels.data) {
+            have.add(label.name);
+          }
+
+          const want = new Set(['size/XS', 'size/S', 'size/M', 'size/L', 'size/XL', 'size/XXL']);
+          const diff = want.difference(have);
+
+          console.log(diff);
 
     - name: Gather files
       id: files
