@@ -165,7 +165,7 @@ runs:
           }
 
           console.log(modified);
-          core.setOutput('files', [...modified].join(' ')]);
+          core.setOutput('files', [...modified].join(' '));
 
     - name: Calculate size
       id: size
