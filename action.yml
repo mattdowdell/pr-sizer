@@ -280,7 +280,7 @@ runs:
           sizes.delete(size);
 
           if (!assigned.has(size)) {
-            console.debug(`adding label: ${s}`);
+            console.debug(`adding label: ${size}`);
 
             github.rest.issues.addLabels({
               owner: context.repo.owner,
@@ -290,7 +290,6 @@ runs:
             })
           }
 
-          /*
           for (const s of sizes) {
             if (assigned.has(s)) {
               console.debug(`removing label: ${s}`);
@@ -303,4 +302,3 @@ runs:
               });
             }
           }
-          */
