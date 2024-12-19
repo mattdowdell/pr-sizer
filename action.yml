@@ -74,8 +74,55 @@ runs:
   using: "composite"
   steps:
     - name: Create labels
-      run: echo "TODO"
-      shell: bash
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      with:
+        script: |
+          const labels = await github.rest.issues.listLabelsForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+          });
+
+          const have = new Set(labels.data.map((l) => l.name));
+          const want = [
+            {
+              name: 'size/XS',
+              description: 'Pull requests with a very small number of lines changed.',
+            },
+            {
+              name: 'size/S',
+              description: 'Pull requests with a small number of lines changed.',
+            },
+            {
+              name: 'size/M',
+              description: 'Pull requests with a medium number of lines changed.',
+            },
+            {
+              name: 'size/L',
+              description: 'Pull requests with a large number of lines changed.',
+            },
+            {
+              name: 'size/XL',
+              description: 'Pull requests with a very large number of lines changed.',
+            },
+            {
+              name: 'size/XXL',
+              description: 'Pull requests with a very, very large number of lines changed.',
+            },
+          ];
+
+          const missing = want.filter((l) => !have.has(l.name));
+
+          for (label of missing) {
+            console.debug(`creating label: ${label.name}`);
+
+            await github.rest.issues.createLabel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: label.name,
+              color: '4f348b',
+              description: label.description,
+            });
+          }
 
     - name: Gather files
       id: files
