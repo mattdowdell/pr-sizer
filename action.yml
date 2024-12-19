@@ -126,7 +126,9 @@ runs:
 
     - name: Gather files
       id: files
-      run: echo "files=TODO" >> $GITHUB_OUTPUT
+      run: |
+        git diff origin/${{ github.base_ref }} ${{ github.head_ref }} --name-only --no-renames | \
+          git check-attr --stdin linguist-generated linguist-vendored
       shell: bash
 
     - name: Calculate size
