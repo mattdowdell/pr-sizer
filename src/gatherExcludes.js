@@ -1,8 +1,12 @@
 module.exports = async ({core, exec, context}) => {
 	const baseRef = process.env.GITHUB_BASE_REF
 	console.debug(baseRef);
-	console.debug(context);
+	console.debug(context.payload.pull_request);
+	console.debug(context.payload.pull_request.base);
 
+	// TODO: use https://www.geeksforgeeks.org/node-js-util-promisify-method/
+	// see https://github.com/golangci/golangci-lint-action/blob/master/src/install.ts#L10
+	// (once converted to js action)
 	let names = '';
 	await exec.exec(
 		'git',

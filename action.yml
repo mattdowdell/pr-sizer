@@ -90,6 +90,9 @@ outputs:
   size:
     description: "The calculated size of the pull request's changes."
     value: ${{ steps.size.outputs.size }}
+  includes:
+    description: "The files included in the size calculation."
+    value: ${{ steps.size.outputs.includes }}
   excludes:
     description: "The files excluded from the size calculation."
     value: ${{ steps.excludes.outputs.excludes }}
@@ -123,34 +126,12 @@ runs:
     - name: Calculate size
       id: size
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      env:
+        excludes: ${{ steps.excludes.outputs.excludes }}
       with:
         script: |
-          const excludes = '${{ steps.excludes.outputs.excludes }}'.split(' ').filter(e => e.length > 0);
-
-          let changed = ''
-          await exec.exec(
-            'git',
-            ['diff', 'origin/${{ github.base_ref }}', 'HEAD', '--numstat', '--ignore-space-change', '--', '.', ...excludes],
-            {
-              listeners: {
-                stdout: (data) => {
-                  changed += data.toString();
-                },
-              }
-            },
-          );
-
-          const data = changed.split(/\r?\n/).filter(c => c.length > 0).map((c) => {
-            const parts = c.split(/\s+/);
-            return {
-              added: parseInt(parts[0]),
-              removed: parseInt(parts[1]),
-              name: parts[2],
-            };
-          });
-
-          const size = data.reduce((total, d) => total + d.added + d.removed, 0);
-          core.setOutput('size', size);
+          const script = require('./src/calculateSize.js')
+          await script({core, exec, context});
 
     - name: Select label
       id: label

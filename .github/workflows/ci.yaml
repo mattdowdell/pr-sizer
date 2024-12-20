@@ -27,4 +27,5 @@ jobs:
         run: |
           echo label=${{ steps.diff-size.outputs.label }}
           echo size=${{ steps.diff-size.outputs.size }}
+          echo includes=${{ steps.diff-size.outputs.includes }}
           echo excludes=${{ steps.diff-size.outputs.excludes }}
