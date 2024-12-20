@@ -4,27 +4,27 @@ module.exports = async ({context, core, github}) => {
 
 	const want = [
 		{
-			name: core.getInput('xs-label'),
+			name: process.env.xs_label,
 			description: 'Pull requests with a very small number of lines changed.',
 		},
 		{
-			name: core.getInput('s-label'),
+			name: process.env.s_label,
 			description: 'Pull requests with a small number of lines changed.',
 		},
 		{
-			name: core.getInput('m-label'),
+			name: process.env.m_label,
 			description: 'Pull requests with a medium number of lines changed.',
 		},
 		{
-			name: core.getInput('l-label'),
+			name: process.env.l_label,
 			description: 'Pull requests with a large number of lines changed.',
 		},
 		{
-			name: core.getInput('xl-label'),
+			name: process.env.xl_label,
 			description: 'Pull requests with a very large number of lines changed.',
 		},
 		{
-			name: core.getInput('xxl-label'),
+			name: process.env.xxl_label,
 			description: 'Pull requests with a very, very large number of lines changed.',
 		},
 	];
