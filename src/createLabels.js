@@ -32,7 +32,7 @@ module.exports = async ({context, core, github}) => {
 	const missing = want.filter(l => !have.has(l.name));
 
 	for (label of missing) {
-		core.debug(`creating label: ${label.name}`);
+		console.debug(`creating label: ${label.name}`);
 
 		await github.rest.issues.createLabel({
 			...context.repo,
