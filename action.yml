@@ -156,47 +156,15 @@ runs:
 
     - name: Assign label
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      env:
+        label: ${{ steps.label.outputs.label }}
+        xs_label: ${{ inputs.xs-label }}
+        s_label: ${{ inputs.s-label }}
+        m_label: ${{ inputs.m-label }}
+        l_label: ${{ inputs.l-label }}
+        xl_label: ${{ inputs.xl-label }}
+        xxl_label: ${{ inputs.xxl-label }}
       with:
         script: |
-          const labels = await github.rest.issues.listLabelsOnIssue({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            issue_number: context.issue.number,
-          });
-
-          const assigned = new Set(labels.data.map(l => l.name));
-          const sizes = new Set([
-            '${{ inputs.xs-label }}',
-            '${{ inputs.s-label }}',
-            '${{ inputs.m-label }}',
-            '${{ inputs.l-label }}',
-            '${{ inputs.xl-label }}',
-            '${{ inputs.xxl-label }}',
-          ]);
-
-          const size = '${{ steps.label.outputs.label }}';
-          sizes.delete(size);
-
-          if (!assigned.has(size)) {
-            console.debug(`adding label: ${size}`);
-
-            github.rest.issues.addLabels({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              labels: [size],
-            })
-          }
-
-          for (const s of sizes) {
-            if (assigned.has(s)) {
-              console.debug(`removing label: ${s}`);
-
-              github.rest.issues.removeLabel({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                name: s,
-              });
-            }
-          }
+          const script = require('./src/assignLabel.js')
+          await script({context, github});
