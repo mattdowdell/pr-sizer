@@ -1,5 +1,7 @@
-module.exports = async ({context, core, github}) => {
+module.exports = async ({core, exec, context}) => {
 	const baseRef = process.env.GITHUB_BASE_REF
+	console.debug(baseRef);
+	console.debug(context);
 
 	let names = '';
 	await exec.exec(

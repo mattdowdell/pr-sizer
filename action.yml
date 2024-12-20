@@ -118,7 +118,7 @@ runs:
       with:
         script: |
           const script = require('./src/gatherExcludes.js')
-          await script({core, exec});
+          await script({core, exec, context});
 
     - name: Calculate size
       id: size
