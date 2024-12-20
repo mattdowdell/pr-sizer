@@ -4,7 +4,7 @@ module.exports = async ({context, core, github}) => {
 
 	const want = [
 		{
-			name: core.getInput('xs-label');
+			name: core.getInput('xs-label'),
 			description: 'Pull requests with a very small number of lines changed.',
 		},
 		{
