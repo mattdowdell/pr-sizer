@@ -1,8 +1,5 @@
-module.exports = async ({core, exec, context}) => {
-	const baseRef = process.env.GITHUB_BASE_REF
-	console.debug(baseRef);
-	console.debug(context.payload.pull_request);
-	console.debug(context.payload.pull_request.base);
+module.exports = async ({context, core, exec}) => {
+	const baseRef = context.payload.pull_request.base.ref
 
 	// TODO: use https://www.geeksforgeeks.org/node-js-util-promisify-method/
 	// see https://github.com/golangci/golangci-lint-action/blob/master/src/install.ts#L10

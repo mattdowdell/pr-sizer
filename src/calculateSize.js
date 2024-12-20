@@ -1,11 +1,11 @@
-module.exports = async ({core, exec}) => {
-	const baseRef = process.env.GITHUB_BASE_REF;
+module.exports = async ({context, core, exec}) => {
+	const baseRef = context.payload.pull_request.base.ref;
 	const excludes = process.env.excludes.split(' ').filter(e => e.length > 0);
 
 	let changed = ''
 	await exec.exec(
 		'git',
-		['diff', `origin/${baseref}`, 'HEAD', '--numstat', '--ignore-space-change', '--', '.', ...excludes],
+		['diff', `origin/${baseRef}`, 'HEAD', '--numstat', '--ignore-space-change', '--', '.', ...excludes],
 		{
 			listeners: {
 				stdout: (data) => {

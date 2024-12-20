@@ -121,7 +121,7 @@ runs:
       with:
         script: |
           const script = require('./src/gatherExcludes.js')
-          await script({core, exec, context});
+          await script({context, core, exec});
 
     - name: Calculate size
       id: size
@@ -131,47 +131,28 @@ runs:
       with:
         script: |
           const script = require('./src/calculateSize.js')
-          await script({core, exec, context});
+          await script({context, core, exec});
 
     - name: Select label
       id: label
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      env:
+        size: ${{ steps.size.outputs.size }}
+        xs_label: ${{ inputs.xs-label }}
+        s_label: ${{ inputs.s-label }}
+        m_label: ${{ inputs.m-label }}
+        l_label: ${{ inputs.l-label }}
+        xl_label: ${{ inputs.xl-label }}
+        xxl_label: ${{ inputs.xxl-label }}
+        xs_threshold: ${{ inputs.xs-threshold }}
+        s_threshold: ${{ inputs.s-threshold }}
+        m_threshold: ${{ inputs.m-threshold }}
+        l_threshold: ${{ inputs.l-threshold }}
+        xl_threshold: ${{ inputs.xl-threshold }}
       with:
         script: |
-          const size = parseInt('${{ steps.size.outputs.size }}');
-          const thresholds = [
-            {
-              label: '${{ inputs.xs-label }}',
-              max: parseInt('${{ inputs.xs-threshold }}'),
-            },
-            {
-              label: '${{ inputs.s-label }}',
-              max: parseInt('${{ inputs.s-threshold }}'),
-            },
-            {
-              label: '${{ inputs.m-label }}',
-              max: parseInt('${{ inputs.m-threshold }}'),
-            },
-            {
-              label: '${{ inputs.l-label }}',
-              max: parseInt('${{ inputs.l-threshold }}'),
-            },
-            {
-              label: '${{ inputs.xl-label }}',
-              max: parseInt('${{ inputs.xl-threshold }}'),
-            },
-          ];
-
-          let label = '${{ inputs.xxl-label }}';
-
-          for (t of thresholds) {
-            if (t.max > size) {
-              label = t.label;
-              break;
-            }
-          }
-
-          core.setOutput('label', label);
+          const script = require('./src/selectLabel.js')
+          await script({core});
 
     - name: Assign label
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
