@@ -101,12 +101,12 @@ runs:
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
       env:
         # workaround for https://github.com/actions/toolkit/issues/1124
-        xs_label: core.getInput('xs-label'),
-        s_label: core.getInput('s-label'),
-        m_label: core.getInput('m-label'),
-        l_label: core.getInput('l-label'),
-        xl_label: core.getInput('xl-label')
-        xxl_label: core.getInput('xxl-label'),
+        xs_label: ${{ inputs.xs-label }}
+        s_label: ${{ inputs.s-label }}
+        m_label: ${{ inputs.m-label }}
+        l_label: ${{ inputs.l-label }}
+        xl_label: ${{ inputs.xl-label }}
+        xxl_label: ${{ inputs.xxl-label }}
       with:
         script: |
           const script = require('./src/createLabels.js')
