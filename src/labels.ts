@@ -19,14 +19,14 @@ export class Label {
   /**
    *
    */
-  public get name(): string {
+  get name(): string {
     return inputs.getLabel(this.input)
   }
 
   /**
    *
    */
-  public get description(): string {
+  get description(): string {
     switch (this.input) {
       case inputs.Label.ExtraSmall:
         return 'Pull requests with a very small number of lines changed.'
@@ -51,7 +51,7 @@ export class Label {
   /**
    *
    */
-  public get color(): string {
+  get color(): string {
     // TODO: make configurable?
     return '4f348b'
   }
@@ -59,7 +59,7 @@ export class Label {
   /**
    *
    */
-  public get threshold(): number {
+  get threshold(): number {
     switch (this.input) {
       case inputs.Label.ExtraSmall:
         return inputs.getThreshold(inputs.Threshold.ExtraSmall)
@@ -110,7 +110,7 @@ export class LabelManager {
   /**
    *
    */
-  public async create(): Promise<void> {
+  async create(): Promise<void> {
     const resp = await this.octokit.rest.issues.listLabelsForRepo({
       owner: 'mattdowdell',
       repo: 'pr-size'
@@ -134,7 +134,7 @@ export class LabelManager {
   /**
    *
    */
-  public select(size: number): Label {
+  select(size: number): Label {
     for (const label of this.labels) {
       if (label.threshold > size) {
         return label
@@ -147,7 +147,7 @@ export class LabelManager {
   /**
    *
    */
-  public async assign(label: Label): Promise<void> {
+  async assign(label: Label): Promise<void> {
     const resp = await this.octokit.rest.issues.listLabelsOnIssue({
       ...this.context.repo,
       issue_number: 22
