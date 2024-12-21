@@ -30135,13 +30135,13 @@ class LabelManager {
             owner: 'mattdowdell',
             repo: 'pr-size'
         });
+        console.debug(resp);
         const have = new Set(resp.data.map(l => l.name));
         const missing = this.labels.filter(l => !have.has(l.name));
         for (const label of missing) {
             core.debug(`creating label: ${label.name}`);
             await this.octokit.rest.issues.createLabel({
-                owner: 'mattdowdell',
-                repo: 'pr-size',
+                ...this.context.repo,
                 name: label.name,
                 color: label.color,
                 description: label.description
@@ -30164,19 +30164,18 @@ class LabelManager {
      */
     async assign(label) {
         const resp = await this.octokit.rest.issues.listLabelsOnIssue({
-            owner: 'mattdowdell',
-            repo: 'pr-size',
+            ...this.context.repo,
             issue_number: 22
         });
+        console.debug(resp);
         const have = new Set(resp.data.map(l => l.name));
         const labels = new Set(this.labels.slice());
         labels.delete(label);
         if (!have.has(label.name)) {
             core.debug(`adding label: ${label.name}`);
             await this.octokit.rest.issues.addLabels({
-                owner: 'mattdowdell',
-                repo: 'pr-size',
-                issue_number: 22,
+                ...this.context.repo,
+                issue_number: this.context.issue.number,
                 labels: [label.name]
             });
         }
@@ -30184,9 +30183,8 @@ class LabelManager {
             if (have.has(rm.name)) {
                 core.debug(`removing label: ${rm.name}`);
                 await this.octokit.rest.issues.removeLabel({
-                    owner: 'mattdowdell',
-                    repo: 'pr-size',
-                    issue_number: 22,
+                    ...this.context.repo,
+                    issue_number: this.context.issue.number,
                     name: rm.name
                 });
             }
@@ -30248,19 +30246,25 @@ const git = __importStar(__nccwpck_require__(1243));
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 async function run() {
+    console.log(1);
     const token = core.getInput('github-token');
     const octokit = github.getOctokit(token);
     const baseRef = 'main';
     const mgr = new labels_1.LabelManager(github.context, octokit);
     try {
+        console.log(2);
         await mgr.create();
+        console.log(3);
         const excludes = await git.excludes(baseRef);
         core.setOutput('excludes', excludes.join(' '));
+        console.log(4);
         const { size, includes } = await git.size(baseRef, excludes);
         core.setOutput('size', size);
         core.setOutput('includes', includes.join(' '));
+        console.log(5);
         const label = mgr.select(size);
         core.setOutput('label', label);
+        console.log(6);
         await mgr.assign(label);
     }
     catch (error) {
