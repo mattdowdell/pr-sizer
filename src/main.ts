@@ -10,23 +10,18 @@ import * as git from './git'
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 export async function run(): Promise<void> {
-  console.log(1)
   const token = core.getInput('github-token')
   const octokit = github.getOctokit(token)
-
-  const baseRef = 'main'
+  const baseRef = github.context.payload.pull_request?.base.ref
 
   const mgr = new LabelManager(github.context, octokit)
 
   try {
-    console.log(2)
     await mgr.create()
 
-    console.log(3)
     const excludes = await git.excludes(baseRef)
     core.setOutput('excludes', excludes.join(' '))
 
-    console.log(4)
     const { size, includes } = await git.size(baseRef, excludes)
     core.setOutput('size', size)
     core.setOutput('includes', includes.join(' '))
@@ -34,7 +29,7 @@ export async function run(): Promise<void> {
     console.log(5)
     const label = mgr.select(size)
     console.log('5.1', label)
-    core.setOutput('label', label)
+    core.setOutput('label', label.name)
 
     console.log(6)
     await mgr.assign(label)

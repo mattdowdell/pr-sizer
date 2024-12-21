@@ -29930,6 +29930,7 @@ async function excludes(baseRef) {
  */
 async function size(baseRef, excludes) {
     const res = await execute(`git diff origin/${baseRef} HEAD --numstat --ignore-space-change -- . ${excludes.join(' ')}`);
+    console.log(res.stdout);
     const data = res.stdout
         .split(/\r?\n/)
         .filter(c => c.length > 0)
@@ -29941,6 +29942,7 @@ async function size(baseRef, excludes) {
             name: parts[2]
         };
     });
+    console.log(data);
     return {
         size: data.reduce((t, d) => t + d.added + d.removed, 0),
         includes: data.map(d => d.name)
@@ -30248,25 +30250,21 @@ const git = __importStar(__nccwpck_require__(1243));
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 async function run() {
-    console.log(1);
     const token = core.getInput('github-token');
     const octokit = github.getOctokit(token);
-    const baseRef = 'main';
+    const baseRef = github.context.payload.pull_request?.base.ref;
     const mgr = new labels_1.LabelManager(github.context, octokit);
     try {
-        console.log(2);
         await mgr.create();
-        console.log(3);
         const excludes = await git.excludes(baseRef);
         core.setOutput('excludes', excludes.join(' '));
-        console.log(4);
         const { size, includes } = await git.size(baseRef, excludes);
         core.setOutput('size', size);
         core.setOutput('includes', includes.join(' '));
         console.log(5);
         const label = mgr.select(size);
         console.log('5.1', label);
-        core.setOutput('label', label);
+        core.setOutput('label', label.name);
         console.log(6);
         await mgr.assign(label);
     }
