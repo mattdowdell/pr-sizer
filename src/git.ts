@@ -37,6 +37,7 @@ export async function size(
     `git diff origin/${baseRef} HEAD --numstat --ignore-space-change -- . ${excludes.join(' ')}`
   )
 
+  console.log(excludes)
   console.log(res.stdout)
 
   const data = res.stdout
@@ -44,9 +45,12 @@ export async function size(
     .filter(c => c.length > 0)
     .map(c => {
       const parts = c.split(/\s+/)
+      const added = parseInt(parts[0])
+      const removed = parseInt(parts[1])
+
       return {
-        added: parseInt(parts[0]),
-        removed: parseInt(parts[1]),
+        added: isNaN(added) ? 0 : added,
+        removed: isNaN(removed) ? 0 : removed,
         name: parts[2]
       }
     })

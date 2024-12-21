@@ -115,12 +115,12 @@ export class LabelManager {
       owner: 'mattdowdell',
       repo: 'pr-size'
     })
-    console.debug(resp)
+
     const have = new Set(resp.data.map(l => l.name))
     const missing = this.labels.filter(l => !have.has(l.name))
 
     for (const label of missing) {
-      core.debug(`creating label: ${label.name}`)
+      console.debug(`creating label: ${label.name}`)
 
       await this.octokit.rest.issues.createLabel({
         ...this.context.repo,

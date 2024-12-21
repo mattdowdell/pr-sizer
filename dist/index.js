@@ -29930,15 +29930,18 @@ async function excludes(baseRef) {
  */
 async function size(baseRef, excludes) {
     const res = await execute(`git diff origin/${baseRef} HEAD --numstat --ignore-space-change -- . ${excludes.join(' ')}`);
+    console.log(excludes);
     console.log(res.stdout);
     const data = res.stdout
         .split(/\r?\n/)
         .filter(c => c.length > 0)
         .map(c => {
         const parts = c.split(/\s+/);
+        const added = parseInt(parts[0]);
+        const removed = parseInt(parts[1]);
         return {
-            added: parseInt(parts[0]),
-            removed: parseInt(parts[1]),
+            added: isNaN(added) ? 0 : added,
+            removed: isNaN(removed) ? 0 : removed,
             name: parts[2]
         };
     });
@@ -30137,11 +30140,10 @@ class LabelManager {
             owner: 'mattdowdell',
             repo: 'pr-size'
         });
-        console.debug(resp);
         const have = new Set(resp.data.map(l => l.name));
         const missing = this.labels.filter(l => !have.has(l.name));
         for (const label of missing) {
-            core.debug(`creating label: ${label.name}`);
+            console.debug(`creating label: ${label.name}`);
             await this.octokit.rest.issues.createLabel({
                 ...this.context.repo,
                 name: label.name,
