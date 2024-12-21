@@ -123,8 +123,7 @@ export class LabelManager {
       core.debug(`creating label: ${label.name}`)
 
       await this.octokit.rest.issues.createLabel({
-        owner: 'mattdowdell',
-        repo: 'pr-size',
+        ...this.context.repo,
         name: label.name,
         color: label.color,
         description: label.description
@@ -150,8 +149,7 @@ export class LabelManager {
    */
   public async assign(label: Label): Promise<void> {
     const resp = await this.octokit.rest.issues.listLabelsOnIssue({
-      owner: 'mattdowdell',
-      repo: 'pr-size',
+      ...this.context.repo,
       issue_number: 22
     })
 
@@ -165,9 +163,8 @@ export class LabelManager {
       core.debug(`adding label: ${label.name}`)
 
       await this.octokit.rest.issues.addLabels({
-        owner: 'mattdowdell',
-        repo: 'pr-size',
-        issue_number: 22,
+        ...this.context.repo,
+        issue_number: this.context.issue.number,
         labels: [label.name]
       })
     }
@@ -177,9 +174,8 @@ export class LabelManager {
         core.debug(`removing label: ${rm.name}`)
 
         await this.octokit.rest.issues.removeLabel({
-          owner: 'mattdowdell',
-          repo: 'pr-size',
-          issue_number: 22,
+          ...this.context.repo,
+          issue_number: this.context.issue.number,
           name: rm.name
         })
       }
