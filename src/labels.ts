@@ -115,6 +115,7 @@ export class LabelManager {
       owner: 'mattdowdell',
       repo: 'pr-size'
     })
+    console.debug(resp);
     const have = new Set(resp.data.map(l => l.name))
     const missing = this.labels.filter(l => !have.has(l.name))
 
@@ -154,6 +155,7 @@ export class LabelManager {
       issue_number: 22
     })
 
+    console.debug(resp);
     const have = new Set(resp.data.map(l => l.name))
     const labels = new Set(this.labels.slice())
 
