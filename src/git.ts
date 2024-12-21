@@ -6,7 +6,7 @@ const execute = promisify(exec)
 /**
  *
  */
-export async function excludes(baseRef: string): Promise<Array<string>> {
+export async function excludes(baseRef: string): Promise<string[]> {
   const r1 = await execute(
     `git diff origin/${baseRef} HEAD --name-only --no-renames`
   )
@@ -31,8 +31,8 @@ export async function excludes(baseRef: string): Promise<Array<string>> {
  */
 export async function size(
   baseRef: string,
-  excludes: Array<string>
-): Promise<{ size: number; includes: Array<string> }> {
+  excludes: string[]
+): Promise<{ size: number; includes: string[] }> {
   const res = await execute(
     `git diff origin/${baseRef} HEAD --numstat --ignore-space-change -- . ${excludes.join(' ')}`
   )

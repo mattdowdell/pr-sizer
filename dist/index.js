@@ -30182,7 +30182,7 @@ class LabelManager {
         }
         for (const rm of labels) {
             if (have.has(rm.name)) {
-                core.debug(`removing label: ${rm}`);
+                core.debug(`removing label: ${rm.name}`);
                 await this.octokit.rest.issues.removeLabel({
                     owner: 'mattdowdell',
                     repo: 'pr-size',

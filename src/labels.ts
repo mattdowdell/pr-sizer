@@ -19,14 +19,14 @@ export class Label {
   /**
    *
    */
-  get name(): string {
+  public get name(): string {
     return inputs.getLabel(this.input)
   }
 
   /**
    *
    */
-  get description(): string {
+  public get description(): string {
     switch (this.input) {
       case inputs.Label.ExtraSmall:
         return 'Pull requests with a very small number of lines changed.'
@@ -51,7 +51,7 @@ export class Label {
   /**
    *
    */
-  get color(): string {
+  public get color(): string {
     // TODO: make configurable?
     return '4f348b'
   }
@@ -59,7 +59,7 @@ export class Label {
   /**
    *
    */
-  get threshold(): number {
+  public get threshold(): number {
     switch (this.input) {
       case inputs.Label.ExtraSmall:
         return inputs.getThreshold(inputs.Threshold.ExtraSmall)
@@ -172,7 +172,7 @@ export class LabelManager {
 
     for (const rm of labels) {
       if (have.has(rm.name)) {
-        core.debug(`removing label: ${rm}`)
+        core.debug(`removing label: ${rm.name}`)
 
         await this.octokit.rest.issues.removeLabel({
           owner: 'mattdowdell',
