@@ -161,7 +161,7 @@ export class LabelManager {
 
     console.log('6.2', label)
     if (!have.has(label.name)) {
-      core.debug(`adding label: ${label.name}`)
+      console.debug(`adding label: ${label.name}`)
 
       await this.octokit.rest.issues.addLabels({
         ...this.context.repo,
@@ -173,7 +173,7 @@ export class LabelManager {
     for (const rm of labels) {
       console.log('6.3', rm)
       if (have.has(rm.name)) {
-        core.debug(`removing label: ${rm.name}`)
+        console.debug(`removing label: ${rm.name}`)
 
         await this.octokit.rest.issues.removeLabel({
           ...this.context.repo,

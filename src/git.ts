@@ -33,7 +33,8 @@ export async function size(
   baseRef: string,
   excludes: string[]
 ): Promise<{ size: number; includes: string[] }> {
-  const cmd = `git diff origin/${baseRef} HEAD --numstat --ignore-space-change -- . ${excludes.join(' ')}`
+  const skip = excludes.map(e => `:^${e}`).join(' ')
+  const cmd = `git diff origin/${baseRef} HEAD --numstat --ignore-space-change -- . ${skip}`
   console.log(cmd)
   const res = await execute(cmd)
 

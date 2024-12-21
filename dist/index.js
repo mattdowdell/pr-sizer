@@ -29929,7 +29929,8 @@ async function excludes(baseRef) {
  *
  */
 async function size(baseRef, excludes) {
-    const cmd = `git diff origin/${baseRef} HEAD --numstat --ignore-space-change -- . ${excludes.join(' ')}`;
+    const skip = excludes.map(e => `:^${e}`).join(' ');
+    const cmd = `git diff origin/${baseRef} HEAD --numstat --ignore-space-change -- . ${skip}`;
     console.log(cmd);
     const res = await execute(cmd);
     console.log(excludes);
@@ -30046,7 +30047,6 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LabelManager = exports.Label = void 0;
-const core = __importStar(__nccwpck_require__(7484));
 const inputs = __importStar(__nccwpck_require__(8422));
 /**
  *
@@ -30179,7 +30179,7 @@ class LabelManager {
         labels.delete(label);
         console.log('6.2', label);
         if (!have.has(label.name)) {
-            core.debug(`adding label: ${label.name}`);
+            console.debug(`adding label: ${label.name}`);
             await this.octokit.rest.issues.addLabels({
                 ...this.context.repo,
                 issue_number: this.context.issue.number,
@@ -30189,7 +30189,7 @@ class LabelManager {
         for (const rm of labels) {
             console.log('6.3', rm);
             if (have.has(rm.name)) {
-                core.debug(`removing label: ${rm.name}`);
+                console.debug(`removing label: ${rm.name}`);
                 await this.octokit.rest.issues.removeLabel({
                     ...this.context.repo,
                     issue_number: this.context.issue.number,
