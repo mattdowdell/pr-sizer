@@ -13,8 +13,8 @@ export async function run(): Promise<void> {
   const token = core.getInput('github-token')
   const octokit = github.getOctokit(token)
 
-  // eslint-disable-next-line @@typescript-eslint/no-unsafe-member-access
-  const baseRef = github.context.payload.pull_request?.base.ref ?? 'main'
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  const baseRef = github.context.payload.pull_request?.base.ref as string
 
   const mgr = new LabelManager(github.context, octokit)
 
