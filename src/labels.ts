@@ -110,10 +110,9 @@ export class LabelManager {
    *
    */
   async create(): Promise<void> {
-    const resp = await this.octokit.rest.issues.listLabelsForRepo({
-      owner: 'mattdowdell',
-      repo: 'pr-size'
-    })
+    const resp = await this.octokit.rest.issues.listLabelsForRepo(
+      this.context.repo
+    )
 
     const have = new Set(resp.data.map(l => l.name))
     const missing = this.labels.filter(l => !have.has(l.name))
@@ -149,7 +148,7 @@ export class LabelManager {
   async assign(label: Label): Promise<void> {
     const resp = await this.octokit.rest.issues.listLabelsOnIssue({
       ...this.context.repo,
-      issue_number: 22
+      issue_number: this.context.issue.number
     })
 
     const have = new Set(resp.data.map(l => l.name))
