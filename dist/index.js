@@ -29929,7 +29929,9 @@ async function excludes(baseRef) {
  *
  */
 async function size(baseRef, excludes) {
-    const res = await execute(`git diff origin/${baseRef} HEAD --numstat --ignore-space-change -- . ${excludes.join(' ')}`);
+    const cmd = `git diff origin/${baseRef} HEAD --numstat --ignore-space-change -- . ${excludes.join(' ')}`;
+    console.log(cmd);
+    const res = await execute(cmd);
     console.log(excludes);
     console.log(res.stdout);
     const data = res.stdout
