@@ -153,12 +153,13 @@ export class LabelManager {
       issue_number: 22
     })
 
-    console.debug(resp)
+    console.log('6.1', resp)
     const have = new Set(resp.data.map(l => l.name))
     const labels = new Set(this.labels.slice())
 
     labels.delete(label)
 
+    console.log('6.2', label)
     if (!have.has(label.name)) {
       core.debug(`adding label: ${label.name}`)
 
@@ -170,6 +171,7 @@ export class LabelManager {
     }
 
     for (const rm of labels) {
+      console.log('6.3', rm)
       if (have.has(rm.name)) {
         core.debug(`removing label: ${rm.name}`)
 
