@@ -66,7 +66,7 @@ jobs:
       - name: Print Output
         id: output
         run: |
-          echo label=${{ steps.diff-size.outputs.label }}
-          echo size=${{ steps.diff-size.outputs.size }}
-          echo includes=${{ steps.diff-size.outputs.includes }}
-          echo excludes=${{ steps.diff-size.outputs.excludes }}
+          echo label=${{ steps.test-action.outputs.label }}
+          echo size=${{ steps.test-action.outputs.size }}
+          echo includes=${{ steps.test-action.outputs.includes }}
+          echo excludes=${{ steps.test-action.outputs.excludes }}
