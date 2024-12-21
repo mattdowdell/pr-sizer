@@ -1,6 +1,6 @@
 name: 'PR Size'
 description:
-  Add a label to each pull request based on the number of lines changed.
+  'Add a label to each pull request based on the number of lines changed.'
 author: 'Matt Dowdell'
 
 # https://docs.github.com/en/actions/sharing-automations/creating-actions/metadata-syntax-for-github-actions#branding
@@ -13,57 +13,61 @@ inputs:
     description:
       'The maximum number of lines changed for an extra small label to be
       assigned (default: 10).'
-    required: true
+    required: false
     default: '10'
   s-threshold:
     description:
       'The maximum number of lines changed for a small label to be assigned
       (default: 100).'
-    required: true
+    required: false
     default: '100'
   m-threshold:
     description:
       'The maximum number of lines changed for a medium label to be assigned
       (default: 200).'
-    required: true
+    required: false
     default: '200'
   l-threshold:
     description:
       'The maximum number of lines changed for a large label to be assigned
       (default: 400).'
-    required: true
+    required: false
     default: '400'
   xl-threshold:
     description:
       'The maximum number of lines changed for a extra large label to be
       assigned (default: 800).'
-    required: true
+    required: false
     default: '800'
   xs-label:
     description: 'The name of the label for very small number of lines changed.'
-    required: true
+    required: false
     default: 'size/XS'
   s-label:
     description: 'The name of the label for small number of lines changed.'
-    required: true
+    required: false
     default: 'size/S'
   m-label:
     description: 'The name of the label for medium number of lines changed.'
-    required: true
+    required: false
     default: 'size/M'
   l-label:
     description: 'The name of the label for large number of lines changed.'
-    required: true
+    required: false
     default: 'size/L'
   xl-label:
     description: 'The name of the label for very large number of lines changed.'
-    required: true
+    required: false
     default: 'size/XL'
   xxl-label:
     description:
       'The name of the label for very, very large number of lines changed.'
-    required: true
+    required: false
     default: 'size/XXL'
+  github-token:
+    description: TODO
+    required: false
+    default: ${{ github.token }}
 
 outputs:
   label:

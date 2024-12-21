@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
-import { Octokit } from 'octokit'
+import { Context } from '@actions/github/lib/context'
+import { GitHub } from '@actions/github/lib/utils'
 import * as inputs from './inputs'
 
 /**
@@ -85,14 +86,15 @@ export class Label {
  *
  */
 export class LabelManager {
-  private octokit: Octokit
-  // private context: string;
+  private context: Context
+  private octokit: InstanceType<typeof GitHub>
   private labels: Label[]
 
   /**
    *
    */
-  constructor(octokit: Octokit) {
+  constructor(context: Context, octokit: InstanceType<typeof GitHub>) {
+    this.context = context
     this.octokit = octokit
 
     this.labels = [

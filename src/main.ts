@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import { Octokit } from 'octokit'
+import * as github from '@actions/github'
 
 import { LabelManager } from './labels'
 import * as git from './git'
@@ -10,10 +10,12 @@ import * as git from './git'
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 export async function run(): Promise<void> {
-  const octokit = new Octokit()
-  const baseRef = 'main' // TODO: how to get this programatically?
+  const token = core.getInput('github-token')
+  const octokit = github.getOctokit(token)
 
-  const mgr = new LabelManager(octokit) // FIXME: get owner, repo and PR number programatically
+  const baseRef = 'main'
+
+  const mgr = new LabelManager(github.context, octokit)
 
   try {
     await mgr.create()
