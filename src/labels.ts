@@ -1,3 +1,5 @@
+import * as core from '@actions/core'
+import { Octokit } from 'octokit'
 import * as inputs from './inputs'
 
 /**
@@ -114,7 +116,7 @@ export class LabelManager {
     const have = new Set(resp.data.map(l => l.name))
     const missing = this.labels.filter(l => !have.has(l.name))
 
-    for (label of missing) {
+    for (const label of missing) {
       core.debug(`creating label: ${label.name}`)
 
       await this.octokit.rest.issues.createLabel({
@@ -131,11 +133,13 @@ export class LabelManager {
    *
    */
   public select(size: number): Label {
-    for (label of this.labels) {
+    for (const label of this.labels) {
       if (label.threshold > size) {
         return label
       }
     }
+
+    return this.labels[-1]
   }
 
   /**
@@ -153,7 +157,7 @@ export class LabelManager {
 
     labels.delete(label)
 
-    if (!have.has(label)) {
+    if (!have.has(label.name)) {
       core.debug(`adding label: ${label.name}`)
 
       await this.octokit.rest.issues.addLabels({
@@ -165,8 +169,8 @@ export class LabelManager {
     }
 
     for (const rm of labels) {
-      if (assigned.has(rm)) {
-        core.debug(`removing label: ${s}`)
+      if (have.has(rm.name)) {
+        core.debug(`removing label: ${rm}`)
 
         await this.octokit.rest.issues.removeLabel({
           owner: 'mattdowdell',

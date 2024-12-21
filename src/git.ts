@@ -18,7 +18,7 @@ export async function excludes(baseRef: string): Promise<Array<string>> {
   const r2 = await execute(
     `git check-attr linguist-generated linguist-vendored -- ${files}`
   )
-  const excludes = r2
+  const excludes = r2.stdout
     .split(/\r?\n/)
     .filter(a => a.endsWith(': set'))
     .map(a => a.split(':')[0])

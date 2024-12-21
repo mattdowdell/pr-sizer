@@ -19,7 +19,7 @@ export async function run(): Promise<void> {
     await mgr.create()
 
     const excludes = await git.excludes(baseRef)
-    core.SetOutput('excludes', excludes.join(' '))
+    core.setOutput('excludes', excludes.join(' '))
 
     const { size, includes } = await git.size(baseRef, excludes)
     core.setOutput('size', size)

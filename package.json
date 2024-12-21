@@ -67,7 +67,8 @@
     ]
   },
   "dependencies": {
-    "@actions/core": "^1.11.1"
+    "@actions/core": "^1.11.1",
+    "octokit": "^4.0.2"
   },
   "devDependencies": {
     "@github/local-action": "^2.2.1",
