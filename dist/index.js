@@ -29930,11 +29930,7 @@ async function excludes(baseRef) {
  */
 async function size(baseRef, excludes) {
     const skip = excludes.map(e => `:^${e}`).join(' ');
-    const cmd = `git diff origin/${baseRef} HEAD --numstat --ignore-space-change -- . ${skip}`;
-    console.log(cmd);
-    const res = await execute(cmd);
-    console.log(excludes);
-    console.log(res.stdout);
+    const res = await execute(`git diff origin/${baseRef} HEAD --numstat --ignore-space-change -- . ${skip}`);
     const data = res.stdout
         .split(/\r?\n/)
         .filter(c => c.length > 0)
@@ -29948,7 +29944,6 @@ async function size(baseRef, excludes) {
             name: parts[2]
         };
     });
-    console.log(data);
     return {
         size: data.reduce((t, d) => t + d.added + d.removed, 0),
         includes: data.map(d => d.name)
@@ -30173,11 +30168,9 @@ class LabelManager {
             ...this.context.repo,
             issue_number: 22
         });
-        console.log('6.1', resp);
         const have = new Set(resp.data.map(l => l.name));
         const labels = new Set(this.labels.slice());
         labels.delete(label);
-        console.log('6.2', label);
         if (!have.has(label.name)) {
             console.debug(`adding label: ${label.name}`);
             await this.octokit.rest.issues.addLabels({
@@ -30186,8 +30179,9 @@ class LabelManager {
                 labels: [label.name]
             });
         }
+        console.log(labels);
+        console.log(have);
         for (const rm of labels) {
-            console.log('6.3', rm);
             if (have.has(rm.name)) {
                 console.debug(`removing label: ${rm.name}`);
                 await this.octokit.rest.issues.removeLabel({
@@ -30266,11 +30260,8 @@ async function run() {
         const { size, includes } = await git.size(baseRef, excludes);
         core.setOutput('size', size);
         core.setOutput('includes', includes.join(' '));
-        console.log(5);
         const label = mgr.select(size);
-        console.log('5.1', label);
         core.setOutput('label', label.name);
-        console.log(6);
         await mgr.assign(label);
     }
     catch (error) {

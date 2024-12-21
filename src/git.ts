@@ -34,12 +34,9 @@ export async function size(
   excludes: string[]
 ): Promise<{ size: number; includes: string[] }> {
   const skip = excludes.map(e => `:^${e}`).join(' ')
-  const cmd = `git diff origin/${baseRef} HEAD --numstat --ignore-space-change -- . ${skip}`
-  console.log(cmd)
-  const res = await execute(cmd)
-
-  console.log(excludes)
-  console.log(res.stdout)
+  const res = await execute(
+    `git diff origin/${baseRef} HEAD --numstat --ignore-space-change -- . ${skip}`
+  )
 
   const data = res.stdout
     .split(/\r?\n/)
@@ -55,8 +52,6 @@ export async function size(
         name: parts[2]
       }
     })
-
-  console.log(data)
 
   return {
     size: data.reduce((t, d) => t + d.added + d.removed, 0),

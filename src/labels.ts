@@ -1,4 +1,3 @@
-import * as core from '@actions/core'
 import { Context } from '@actions/github/lib/context'
 import { GitHub } from '@actions/github/lib/utils'
 import * as inputs from './inputs'
@@ -153,13 +152,11 @@ export class LabelManager {
       issue_number: 22
     })
 
-    console.log('6.1', resp)
     const have = new Set(resp.data.map(l => l.name))
     const labels = new Set(this.labels.slice())
 
     labels.delete(label)
 
-    console.log('6.2', label)
     if (!have.has(label.name)) {
       console.debug(`adding label: ${label.name}`)
 
@@ -170,8 +167,9 @@ export class LabelManager {
       })
     }
 
+    console.log(labels)
+    console.log(have)
     for (const rm of labels) {
-      console.log('6.3', rm)
       if (have.has(rm.name)) {
         console.debug(`removing label: ${rm.name}`)
 

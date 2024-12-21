@@ -28,12 +28,9 @@ export async function run(): Promise<void> {
     core.setOutput('size', size)
     core.setOutput('includes', includes.join(' '))
 
-    console.log(5)
     const label = mgr.select(size)
-    console.log('5.1', label)
     core.setOutput('label', label.name)
 
-    console.log(6)
     await mgr.assign(label)
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
