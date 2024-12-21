@@ -33,7 +33,7 @@ export async function run(): Promise<void> {
 
     console.log(5)
     const label = mgr.select(size)
-    console.log("5.1", label)
+    console.log('5.1', label)
     core.setOutput('label', label)
 
     console.log(6)

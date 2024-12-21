@@ -141,7 +141,7 @@ export class LabelManager {
       }
     }
 
-    return this.labels[-1]
+    return this.labels[this.labels.length - 1]
   }
 
   /**

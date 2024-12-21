@@ -30157,7 +30157,7 @@ class LabelManager {
                 return label;
             }
         }
-        return this.labels[-1];
+        return this.labels[this.labels.length - 1];
     }
     /**
      *
@@ -30265,6 +30265,7 @@ async function run() {
         core.setOutput('includes', includes.join(' '));
         console.log(5);
         const label = mgr.select(size);
+        console.log('5.1', label);
         core.setOutput('label', label);
         console.log(6);
         await mgr.assign(label);
