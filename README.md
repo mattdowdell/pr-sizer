@@ -60,20 +60,30 @@ jobs:
 
 ## Inputs
 
-| Input           | Type   | Default    | Description                                                                  |
-| --------------- | ------ | ---------- | ---------------------------------------------------------------------------- |
-| `xs-threshold`  | String | `10`       | The maximum number of lines changed for an extra small label to be assigned. |
-| `s-threshold`   | String | `100`      | The maximum number of lines changed for a small label to be assigned.        |
-| `m-threshold`   | String | `200`      | The maximum number of lines changed for a medium label to be assigned.       |
-| `l-threshold`   | String | `400`      | The maximum number of lines changed for a large label to be assigned.        |
-| `xl-threshold`  | String | `800`      | The maximum number of lines changed for an extra large label to be assigned. |
-| `xs-label`      | String | `size/XS`  | The name of the label for very small number of lines changed.                |
-| `s-label`       | String | `size/S`   | The name of the label for small number of lines changed.                     |
-| `m-label`       | String | `size/M`   | The name of the label for medium number of lines changed.                    |
-| `l-label`       | String | `size/L`   | The name of the label for large number of lines changed.                     |
-| `xl-label`      | String | `size/XL`  | The name of the label for very large number of lines changed.                |
-| `xxl-label`     | String | `size/XXL` | The name of the label for very, very large number of lines changed.          |
-
-### Label creation
+| Name            | Type   | Default      | Description                                                                  |
+| --------------- | ------ | ------------ | ---------------------------------------------------------------------------- |
+| `xs-threshold`  | String | `10`         | The maximum number of lines changed for an extra small label to be assigned. |
+| `s-threshold`   | String | `100`        | The maximum number of lines changed for a small label to be assigned.        |
+| `m-threshold`   | String | `200`        | The maximum number of lines changed for a medium label to be assigned.       |
+| `l-threshold`   | String | `400`        | The maximum number of lines changed for a large label to be assigned.        |
+| `xl-threshold`  | String | `800`        | The maximum number of lines changed for an extra large label to be assigned. |
+| `xs-label`      | String | `size/XS`    | The name of the label for a very small number of lines changed.              |
+| `s-label`       | String | `size/S`     | The name of the label for a small number of lines changed.                   |
+| `m-label`       | String | `size/M`     | The name of the label for a medium number of lines changed.                  |
+| `l-label`       | String | `size/L`     | The name of the label for a large number of lines changed.                   |
+| `xl-label`      | String | `size/XL`    | The name of the label for a very large number of lines changed.              |
+| `xxl-label`     | String | `size/XXL`   | The name of the label for a very, very large number of lines changed.        |
+| `github-token`  | String | github.token | TODO |
 
 <!-- TODO: discuss how labels can be modified post-creation -->
+
+## Outputs
+
+| Name       | Type   | Description |
+| ---------- | ------ | ----------- |
+| `label`    | String | TODO |
+| `size`     | String | TODO |
+| `includes` | String | TODO |
+| `excludes` | String | TODO |
+
+## Recipes
