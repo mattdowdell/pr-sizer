@@ -56,9 +56,11 @@ jobs:
       - name: Test Local Action
         id: test-action
         uses: ./
-        with:
-          milliseconds: 2000
 
       - name: Print Output
         id: output
-        run: echo "${{ steps.test-action.outputs.time }}"
+        run: |
+          echo label=${{ steps.diff-size.outputs.label }}
+          echo size=${{ steps.diff-size.outputs.size }}
+          echo includes=${{ steps.diff-size.outputs.includes }}
+          echo excludes=${{ steps.diff-size.outputs.excludes }}
