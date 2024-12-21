@@ -166,8 +166,6 @@ export class LabelManager {
       })
     }
 
-    console.log(labels)
-    console.log(have)
     for (const rm of labels) {
       if (have.has(rm.name)) {
         console.debug(`removing label: ${rm.name}`)
