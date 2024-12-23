@@ -32,12 +32,14 @@ generated or vendored in `.gitattributes` are also excluded, allowing automated
 changes to be filtered out. For example:
 
 ```gitignore
-# See https://github.com/github-linguist/linguist/blob/main/docs/overrides.md for further details
 vendor/**    linguist-vendored
 generated/** linguist-generated
 ```
 
+See [Linguist's overrides][2] for further documentation.
+
 [1]: https://smartbear.com/learn/code-review/best-practices-for-peer-code-review
+[2]: https://github.com/github-linguist/linguist/blob/main/docs/overrides.md
 
 ## Usage
 
