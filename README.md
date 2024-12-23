@@ -99,7 +99,7 @@ achiving that using the [`gh`][3] CLI.
 These example use the `gh api` subcommand instead of `gh pr list` to avoid
 missing data due to the `--limit` option.
 
-[3]: #todo
+[3]: https://cli.github.com/
 
 ### List all sized PRs
 
@@ -136,7 +136,11 @@ gh api \
   /repos/mattdowdell/pr-size/pulls\?state=closed \
   --paginate \
   --jq '.[]
-    | select(.merged_at > "2024-12-19T12:19:42Z" and .merged_at <= "2024-12-23T09:04:04Z" and .base.ref == "main")
+    | select(
+      .merged_at > "2024-12-19T12:19:42Z" and
+      .merged_at <= "2024-12-23T09:04:04Z" and
+      .base.ref == "main"
+    )
     | "PR #\(.number): Merged at: \(.merged_at), \(.labels[].name | select(. | startswith("size/")))"'
 ```
 
@@ -167,7 +171,7 @@ gh api \
   /repos/mattdowdell/pr-size/pulls\?state=closed \
   --paginate \
   --jq '[ .[] | select(.merged_at != null and .base.ref == "main") ]
-    | map({ number: .number, size: .labels[].name | select(. | startswith("size/")) })
+    | map({ size: .labels[].name | select(. | startswith("size/")) })
     | group_by(.size)
     | .[]
     | "\(length) x \(.[0].size)"'
@@ -193,8 +197,12 @@ branch between 2 dates for each size.
 gh api \
   /repos/mattdowdell/pr-size/pulls\?state=closed \
   --paginate \
-  --jq '[ .[] | select(.merged_at > "2024-12-19T12:19:42Z" and .merged_at <= "2024-12-23T09:04:04Z" and .base.ref == "main") ]
-    | map({ number: .number, size: .labels[].name | select(. | startswith("size/")) })
+  --jq '[ .[] | select(
+      .merged_at > "2024-12-19T12:19:42Z" and
+      .merged_at <= "2024-12-23T09:04:04Z" and
+      .base.ref == "main"
+    ) ]
+    | map({ size: .labels[].name | select(. | startswith("size/")) })
     | group_by(.size)
     | .[]
     | "\(length) x \(.[0].size)"'
