@@ -64,22 +64,25 @@ jobs:
 
 ## Inputs
 
-| Name           | Type   | Default      | Description                                                                  |
-| -------------- | ------ | ------------ | ---------------------------------------------------------------------------- |
-| `xs-threshold` | String | `10`         | The maximum number of lines changed for an extra small label to be assigned. |
-| `s-threshold`  | String | `100`        | The maximum number of lines changed for a small label to be assigned.        |
-| `m-threshold`  | String | `200`        | The maximum number of lines changed for a medium label to be assigned.       |
-| `l-threshold`  | String | `400`        | The maximum number of lines changed for a large label to be assigned.        |
-| `xl-threshold` | String | `800`        | The maximum number of lines changed for an extra large label to be assigned. |
-| `xs-label`     | String | `size/XS`    | The name of the label for a very small number of lines changed.              |
-| `s-label`      | String | `size/S`     | The name of the label for a small number of lines changed.                   |
-| `m-label`      | String | `size/M`     | The name of the label for a medium number of lines changed.                  |
-| `l-label`      | String | `size/L`     | The name of the label for a large number of lines changed.                   |
-| `xl-label`     | String | `size/XL`    | The name of the label for a very large number of lines changed.              |
-| `xxl-label`    | String | `size/XXL`   | The name of the label for a very, very large number of lines changed.        |
-| `github-token` | String | github.token | TODO                                                                         |
+| Name           | Type   | Default           | Description                                                                  |
+| -------------- | ------ | ----------------- | ---------------------------------------------------------------------------- |
+| `xs-threshold` | String | `10`              | The maximum number of lines changed for an extra small label to be assigned. |
+| `s-threshold`  | String | `100`             | The maximum number of lines changed for a small label to be assigned.        |
+| `m-threshold`  | String | `200`             | The maximum number of lines changed for a medium label to be assigned.       |
+| `l-threshold`  | String | `400`             | The maximum number of lines changed for a large label to be assigned.        |
+| `xl-threshold` | String | `800`             | The maximum number of lines changed for an extra large label to be assigned. |
+| `xs-label`     | String | `size/XS`         | The name of the label for a very small number of lines changed.              |
+| `s-label`      | String | `size/S`          | The name of the label for a small number of lines changed.                   |
+| `m-label`      | String | `size/M`          | The name of the label for a medium number of lines changed.                  |
+| `l-label`      | String | `size/L`          | The name of the label for a large number of lines changed.                   |
+| `xl-label`     | String | `size/XL`         | The name of the label for a very large number of lines changed.              |
+| `xxl-label`    | String | `size/XXL`        | The name of the label for a very, very large number of lines changed.        |
+| `github-token` | String | [github.token][3] | The token to use for managing labels.                                        |
 
 <!-- TODO: discuss how labels can be modified post-creation -->
+
+[3]:
+  https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication
 
 ## Outputs
 
@@ -94,12 +97,12 @@ jobs:
 
 Labelling pull requests with a size is a good start, but the real value comes
 from tracking the size of changes over time. The below recipes are aimed at
-achiving that using the [`gh`][3] CLI.
+achiving that using the [`gh`][4] CLI.
 
 These example use the `gh api` subcommand instead of `gh pr list` to avoid
 missing data due to the `--limit` option.
 
-[3]: https://cli.github.com/
+[4]: https://cli.github.com/
 
 ### List all sized PRs
 
