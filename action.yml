@@ -65,7 +65,7 @@ inputs:
     required: false
     default: 'size/XXL'
   github-token:
-    description: TODO
+    description: The token to use for managing labels.
     required: false
     default: ${{ github.token }}
 
