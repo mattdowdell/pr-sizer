@@ -70,7 +70,7 @@
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.0",
     "@octokit/rest": "^21.0.2",
-    "octokit": "^4.0.2"
+    "octokit": "^4.0.3"
   },
   "devDependencies": {
     "@github/local-action": "^2.2.1",
