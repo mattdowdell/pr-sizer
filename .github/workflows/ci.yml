@@ -16,45 +16,12 @@ permissions:
   contents: read
 
 jobs:
-  test-typescript:
-    name: TypeScript Tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        id: setup-node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .node-version
-          cache: npm
-
-      - name: Install Dependencies
-        id: npm-ci
-        run: npm ci
-
-      - name: Check Format
-        id: npm-format-check
-        run: npm run format:check
-
-      - name: Lint
-        id: npm-lint
-        run: npm run lint
-
-      - name: Test
-        id: npm-ci-test
-        run: npm run ci-test
-
-  test-action:
-    name: GitHub Actions Test
+  size:
+    name: Size
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: write
-
     steps:
       - name: Checkout
         id: checkout
@@ -62,14 +29,33 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Test Local Action
-        id: test-action
+      - name: Size
+        id: size
         uses: ./
 
-      - name: Print Output
-        id: output
+      - name: Output
         run: |
-          echo label=${{ steps.test-action.outputs.label }}
-          echo size=${{ steps.test-action.outputs.size }}
-          echo includes=${{ steps.test-action.outputs.includes }}
-          echo excludes=${{ steps.test-action.outputs.excludes }}
+          echo label=${{ steps.size.outputs.label }}
+          echo size=${{ steps.size.outputs.size }}
+          echo includes=${{ steps.size.outputs.includes }}
+          echo excludes=${{ steps.size.outputs.excludes }}
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lint Codebase
+        id: super-linter
+        uses: super-linter/super-linter/slim@v7
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
