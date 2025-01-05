@@ -26,13 +26,18 @@ export enum Label {
 /**
  *
  */
-export function getThreshold(threshold: Threshold): number {
-  return parseInt(getInput(threshold))
-}
+export class InputUtil {
+  /**
+   *
+   */
+  getThreshold(t: Threshold): number {
+    return parseInt(getInput(t))
+  }
 
-/**
- *
- */
-export function getLabel(label: Label): string {
-  return getInput(label)
+  /**
+   *
+   */
+  getLabel(l: Label): string {
+    return getInput(l)
+  }
 }

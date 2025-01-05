@@ -6,12 +6,14 @@ import * as inputs from './inputs'
  *
  */
 export class Label {
+  private util: inputs.InputUtil
   private input: inputs.Label
 
   /**
    *
    */
-  constructor(input: inputs.Label) {
+  constructor(inputUtil: inputs.InputUtil, input: inputs.Label) {
+    this.util = inputUtil
     this.input = input
   }
 
@@ -19,7 +21,7 @@ export class Label {
    *
    */
   get name(): string {
-    return inputs.getLabel(this.input)
+    return this.util.getLabel(this.input)
   }
 
   /**
@@ -61,21 +63,22 @@ export class Label {
   get threshold(): number {
     switch (this.input) {
       case inputs.Label.ExtraSmall:
-        return inputs.getThreshold(inputs.Threshold.ExtraSmall)
+        return this.util.getThreshold(inputs.Threshold.ExtraSmall)
 
       case inputs.Label.Small:
-        return inputs.getThreshold(inputs.Threshold.Small)
+        return this.util.getThreshold(inputs.Threshold.Small)
 
       case inputs.Label.Medium:
-        return inputs.getThreshold(inputs.Threshold.Medium)
+        return this.util.getThreshold(inputs.Threshold.Medium)
 
       case inputs.Label.Large:
-        return inputs.getThreshold(inputs.Threshold.Large)
+        return this.util.getThreshold(inputs.Threshold.Large)
 
       case inputs.Label.ExtraLarge:
-        return inputs.getThreshold(inputs.Threshold.ExtraLarge)
+        return this.util.getThreshold(inputs.Threshold.ExtraLarge)
 
       case inputs.Label.ExtraExtraLarge:
+        // FIXME: why doesn't this work?
         return Infinity
     }
   }
@@ -92,17 +95,21 @@ export class LabelManager {
   /**
    *
    */
-  constructor(context: Context, octokit: InstanceType<typeof GitHub>) {
+  constructor(
+    context: Context,
+    octokit: InstanceType<typeof GitHub>,
+    inputUtil: inputs.InputUtil
+  ) {
     this.context = context
     this.octokit = octokit
 
     this.labels = [
-      new Label(inputs.Label.ExtraSmall),
-      new Label(inputs.Label.Small),
-      new Label(inputs.Label.Medium),
-      new Label(inputs.Label.Large),
-      new Label(inputs.Label.ExtraLarge),
-      new Label(inputs.Label.ExtraExtraLarge)
+      new Label(inputUtil, inputs.Label.ExtraSmall),
+      new Label(inputUtil, inputs.Label.Small),
+      new Label(inputUtil, inputs.Label.Medium),
+      new Label(inputUtil, inputs.Label.Large),
+      new Label(inputUtil, inputs.Label.ExtraLarge),
+      new Label(inputUtil, inputs.Label.ExtraExtraLarge)
     ]
   }
 

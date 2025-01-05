@@ -29904,87 +29904,93 @@ function wrappy (fn, cb) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.excludes = excludes;
-exports.size = size;
+exports.GitExec = exports.GitUtil = void 0;
 const child_process_1 = __nccwpck_require__(5317);
 const util_1 = __nccwpck_require__(9023);
 const execute = (0, util_1.promisify)(child_process_1.exec);
 /**
  *
  */
-async function excludes(baseRef) {
-    const files = parseDiffNames(await getDiffNames(baseRef));
-    return parseExcludes(await getExcludes(files));
-}
-/**
- *
- */
-async function size(baseRef, excludes) {
-    return parseSize(await getSize(baseRef, excludes));
-}
-/**
- *
- */
-async function getDiffNames(baseRef) {
-    const result = await execute(`git diff origin/${baseRef} HEAD --name-only --no-renames`);
-    return result.stdout;
-}
-/**
- *
- */
-function parseDiffNames(input) {
-    return input
-        .split(/\r?\n/)
-        .filter(n => n.length > 0)
-        .join(' ');
-}
-/**
- *
- */
-async function getExcludes(files) {
-    const result = await execute(`git check-attr linguist-generated linguist-vendored -- ${files}`);
-    return result.stdout;
-}
-/**
- *
- */
-function parseExcludes(input) {
-    const excludes = input
-        .split(/\r?\n/)
-        .filter(a => a.endsWith(': set'))
-        .map(a => a.split(':')[0]);
-    return [...new Set(excludes)];
-}
-/**
- *
- */
-async function getSize(baseRef, excludes) {
-    const skip = excludes.map(e => `:^${e}`).join(' ');
-    const result = await execute(`git diff origin/${baseRef} HEAD --numstat --ignore-space-change -- . ${skip}`);
-    return result.stdout;
-}
-/**
- *
- */
-function parseSize(input) {
-    const data = input
-        .split(/\r?\n/)
-        .filter(c => c.length > 0)
-        .map(c => {
-        const parts = c.split(/\s+/);
-        const added = parseInt(parts[0]);
-        const removed = parseInt(parts[1]);
+class GitUtil {
+    gitExec;
+    constructor(gitExec) {
+        this.gitExec = gitExec;
+    }
+    /**
+     *
+     */
+    async getExcludes(baseRef) {
+        const files = this.parseDiffNames(await this.gitExec.getDiffNames(baseRef));
+        return this.parseExcludes(await this.gitExec.getExcludes(files));
+    }
+    /**
+     *
+     */
+    async getSize(baseRef, excludes) {
+        return this.parseSize(await this.gitExec.getSize(baseRef, excludes));
+    }
+    parseDiffNames(input) {
+        return input
+            .split(/\r?\n/)
+            .filter(n => n.length > 0)
+            .join(' ');
+    }
+    parseExcludes(input) {
+        const excludes = input
+            .split(/\r?\n/)
+            .filter(a => a.endsWith(': set'))
+            .map(a => a.split(':')[0]);
+        return [...new Set(excludes)];
+    }
+    parseSize(input) {
+        const data = input
+            .split(/\r?\n/)
+            .filter(c => c.length > 0)
+            .map(c => {
+            const parts = c.split(/\s+/);
+            const added = parseInt(parts[0]);
+            const removed = parseInt(parts[1]);
+            return {
+                added: isNaN(added) ? 0 : added,
+                removed: isNaN(removed) ? 0 : removed,
+                name: parts[2]
+            };
+        });
         return {
-            added: isNaN(added) ? 0 : added,
-            removed: isNaN(removed) ? 0 : removed,
-            name: parts[2]
+            size: data.reduce((t, d) => t + d.added + d.removed, 0),
+            includes: data.map(d => d.name)
         };
-    });
-    return {
-        size: data.reduce((t, d) => t + d.added + d.removed, 0),
-        includes: data.map(d => d.name)
-    };
+    }
 }
+exports.GitUtil = GitUtil;
+/**
+ *
+ */
+class GitExec {
+    /**
+     *
+     */
+    async getDiffNames(baseRef) {
+        const result = await execute(`git diff origin/${baseRef} HEAD --name-only --no-renames`);
+        return result.stdout;
+    }
+    /**
+     *
+     */
+    async getExcludes(files) {
+        const result = await execute(`git check-attr linguist-generated linguist-vendored -- ${files}`);
+        return result.stdout;
+    }
+    /**
+     *
+     */
+    async getSize(baseRef, excludes) {
+        const skip = excludes.map(e => `:^${e}`).join(' ');
+        const result = await execute(`git diff origin/${baseRef} HEAD --numstat --ignore-space-change -- . ${skip}`);
+        return result.stdout;
+    }
+}
+exports.GitExec = GitExec;
 
 
 /***/ }),
@@ -29995,9 +30001,7 @@ function parseSize(input) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Label = exports.Threshold = void 0;
-exports.getThreshold = getThreshold;
-exports.getLabel = getLabel;
+exports.InputUtil = exports.Label = exports.Threshold = void 0;
 const core_1 = __nccwpck_require__(7484);
 /**
  *
@@ -30025,15 +30029,21 @@ var Label;
 /**
  *
  */
-function getThreshold(threshold) {
-    return parseInt((0, core_1.getInput)(threshold));
+class InputUtil {
+    /**
+     *
+     */
+    getThreshold(t) {
+        return parseInt((0, core_1.getInput)(t));
+    }
+    /**
+     *
+     */
+    getLabel(l) {
+        return (0, core_1.getInput)(l);
+    }
 }
-/**
- *
- */
-function getLabel(label) {
-    return (0, core_1.getInput)(label);
-}
+exports.InputUtil = InputUtil;
 
 
 /***/ }),
@@ -30083,18 +30093,20 @@ const inputs = __importStar(__nccwpck_require__(8422));
  *
  */
 class Label {
+    util;
     input;
     /**
      *
      */
-    constructor(input) {
+    constructor(inputUtil, input) {
+        this.util = inputUtil;
         this.input = input;
     }
     /**
      *
      */
     get name() {
-        return inputs.getLabel(this.input);
+        return this.util.getLabel(this.input);
     }
     /**
      *
@@ -30128,16 +30140,17 @@ class Label {
     get threshold() {
         switch (this.input) {
             case inputs.Label.ExtraSmall:
-                return inputs.getThreshold(inputs.Threshold.ExtraSmall);
+                return this.util.getThreshold(inputs.Threshold.ExtraSmall);
             case inputs.Label.Small:
-                return inputs.getThreshold(inputs.Threshold.Small);
+                return this.util.getThreshold(inputs.Threshold.Small);
             case inputs.Label.Medium:
-                return inputs.getThreshold(inputs.Threshold.Medium);
+                return this.util.getThreshold(inputs.Threshold.Medium);
             case inputs.Label.Large:
-                return inputs.getThreshold(inputs.Threshold.Large);
+                return this.util.getThreshold(inputs.Threshold.Large);
             case inputs.Label.ExtraLarge:
-                return inputs.getThreshold(inputs.Threshold.ExtraLarge);
+                return this.util.getThreshold(inputs.Threshold.ExtraLarge);
             case inputs.Label.ExtraExtraLarge:
+                // FIXME: why doesn't this work?
                 return Infinity;
         }
     }
@@ -30153,16 +30166,16 @@ class LabelManager {
     /**
      *
      */
-    constructor(context, octokit) {
+    constructor(context, octokit, inputUtil) {
         this.context = context;
         this.octokit = octokit;
         this.labels = [
-            new Label(inputs.Label.ExtraSmall),
-            new Label(inputs.Label.Small),
-            new Label(inputs.Label.Medium),
-            new Label(inputs.Label.Large),
-            new Label(inputs.Label.ExtraLarge),
-            new Label(inputs.Label.ExtraExtraLarge)
+            new Label(inputUtil, inputs.Label.ExtraSmall),
+            new Label(inputUtil, inputs.Label.Small),
+            new Label(inputUtil, inputs.Label.Medium),
+            new Label(inputUtil, inputs.Label.Large),
+            new Label(inputUtil, inputs.Label.ExtraLarge),
+            new Label(inputUtil, inputs.Label.ExtraExtraLarge)
         ];
     }
     /**
@@ -30271,24 +30284,31 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = run;
 const core = __importStar(__nccwpck_require__(7484));
 const github = __importStar(__nccwpck_require__(3228));
+const inputs_1 = __nccwpck_require__(8422);
 const labels_1 = __nccwpck_require__(4584);
-const git = __importStar(__nccwpck_require__(1243));
+const git_1 = __nccwpck_require__(1243);
 /**
  * The main function for the action.
  *
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 async function run() {
+    if (github.context.payload.pull_request == null) {
+        console.debug('skipping for non-pull request');
+        return;
+    }
     const token = core.getInput('github-token');
     const octokit = github.getOctokit(token);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const baseRef = github.context.payload.pull_request?.base.ref;
-    const mgr = new labels_1.LabelManager(github.context, octokit);
+    const gitExec = new git_1.GitExec();
+    const gitUtil = new git_1.GitUtil(gitExec);
+    const inputUtil = new inputs_1.InputUtil();
+    const mgr = new labels_1.LabelManager(github.context, octokit, inputUtil);
+    const baseRef = github.context.payload.pull_request.base.ref;
     try {
         await mgr.create();
-        const excludes = await git.excludes(baseRef);
+        const excludes = await gitUtil.getExcludes(baseRef);
         core.setOutput('excludes', excludes.join(' '));
-        const { size, includes } = await git.size(baseRef, excludes);
+        const { size, includes } = await gitUtil.getSize(baseRef, excludes);
         core.setOutput('size', size);
         core.setOutput('includes', includes.join(' '));
         const label = mgr.select(size);
