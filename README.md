@@ -61,8 +61,7 @@ jobs:
           fetch-depth: 0 # for comparing changes to the target branch
           persist-credentials: false
 
-      # TODO: change to a tag once a release has been created
-      - uses: mattdowdell/pr-sizer@main
+      - uses: mattdowdell/pr-sizer@v0.1.0
 ```
 
 ## Inputs
