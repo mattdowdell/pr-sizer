@@ -1,4 +1,4 @@
-# pr-size
+# pr-sizer
 
 A GitHub Action for labelling pull requests with size categories.
 
@@ -43,12 +43,12 @@ See [Linguist's overrides][2] for further documentation.
 ## Usage
 
 ```yaml
-name: PR Size
+name: CI
 on:
   pull_request:
 jobs:
-  pr-size:
-    name: PR Size
+  size:
+    name: Size
     runs-on: ubuntu-latest
     permissions:
       contents: read       # for checkout
@@ -56,10 +56,10 @@ jobs:
     steps:
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # for comparing changes to the target branch
 
       # TODO: change to a tag once a release has been created
-      - uses: mattdowdell/pr-size@main
+      - uses: mattdowdell/pr-sizer@main
 ```
 
 ## Inputs
@@ -77,12 +77,12 @@ jobs:
 | `l-label`      | String | `size/L`          | The name of the label for a large number of lines changed.                   |
 | `xl-label`     | String | `size/XL`         | The name of the label for a very large number of lines changed.              |
 | `xxl-label`    | String | `size/XXL`        | The name of the label for a very, very large number of lines changed.        |
+| `color`        | String | ![](./assets/box.svg) `4f348b` | The colour to use when creating labels.                                      |
 | `github-token` | String | [github.token][3] | The token to use for managing labels.                                        |
 
 <!-- TODO: discuss how labels can be modified post-creation -->
 
-[3]:
-  https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication
+[3]: https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication
 
 ## Outputs
 
@@ -111,7 +111,7 @@ respective size labels.
 
 ```sh
 gh api \
-  /repos/mattdowdell/pr-size/pulls\?state=closed \
+  /repos/mattdowdell/pr-sizer/pulls\?state=closed \
   --paginate \
   --jq '.[]
     | select((.merged_at != null) and (.base.ref == "main"))
@@ -136,7 +136,7 @@ to the `main` branch between 2 dates with their respective size labels.
 
 ```sh
 gh api \
-  /repos/mattdowdell/pr-size/pulls\?state=closed \
+  /repos/mattdowdell/pr-sizer/pulls\?state=closed \
   --paginate \
   --jq '.[]
     | select(
@@ -171,7 +171,7 @@ the number of pull requests merged to the `main` branch for each size.
 
 ```sh
 gh api \
-  /repos/mattdowdell/pr-size/pulls\?state=closed \
+  /repos/mattdowdell/pr-sizer/pulls\?state=closed \
   --paginate \
   --jq '[ .[] | select(.merged_at != null and .base.ref == "main") ]
     | map({ size: .labels[].name | select(. | startswith("size/")) })
@@ -198,7 +198,7 @@ branch between 2 dates for each size.
 
 ```sh
 gh api \
-  /repos/mattdowdell/pr-size/pulls\?state=closed \
+  /repos/mattdowdell/pr-sizer/pulls\?state=closed \
   --paginate \
   --jq '[ .[] | select(
       .merged_at > "2024-12-19T12:19:42Z" and
@@ -230,7 +230,7 @@ to the `main` branch with a `size/XXL` label.
 
 ```sh
 gh api \
-  /repos/mattdowdell/pr-size/pulls\?state=closed \
+  /repos/mattdowdell/pr-sizer/pulls\?state=closed \
   --jq '.[]
     | select(.merged_at != null and .base.ref == "main" and .labels[].name == "size/XXL")
     | "PR #\(.number)"'

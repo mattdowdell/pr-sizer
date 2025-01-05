@@ -1,4 +1,0 @@
-* text=auto eol=lf
-
-dist/** -diff linguist-generated
-package-lock.json linguist-generated
