@@ -2,6 +2,7 @@
  *
  */
 module.exports = async ({context, core, exec, github}) => {
+    console.debug(context, core, exec, github)
     if (!context.payload.pull_request) {
         console.debug('skipping non-pull request')
         return
@@ -128,6 +129,7 @@ async function assignLabel({context, github, label}) {
 }
 
 async function gatherExcludes({baseRef, exec}) {
+    console.debug(baseRef, exec)
     const s1 = await execute(
         exec,
         'git',
@@ -151,6 +153,7 @@ async function gatherExcludes({baseRef, exec}) {
 }
 
 async function getSize({baseRef, exec, excludes}) {
+    console.debug(baseRef, exec, excludes)
     const output = await execute(
         exec,
         'git',
@@ -184,6 +187,7 @@ async function getSize({baseRef, exec, excludes}) {
 }
 
 async function execute({exec, cmd, args}) {
+    console.debug(exec, cmd, args)
     let output = '';
     const options = {
         listeners: {
