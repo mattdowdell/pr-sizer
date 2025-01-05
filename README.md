@@ -77,7 +77,7 @@ jobs:
 | `l-label`      | String | `size/L`          | The name of the label for a large number of lines changed.                   |
 | `xl-label`     | String | `size/XL`         | The name of the label for a very large number of lines changed.              |
 | `xxl-label`    | String | `size/XXL`        | The name of the label for a very, very large number of lines changed.        |
-| `color`        | String | `4f348b`          | The colour to use when creating labels.                                      |
+| `color`        | String | ![](./assets/box.svg) `4f348b` | The colour to use when creating labels.                                      |
 | `github-token` | String | [github.token][3] | The token to use for managing labels.                                        |
 
 <!-- TODO: discuss how labels can be modified post-creation -->
