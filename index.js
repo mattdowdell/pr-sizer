@@ -152,7 +152,9 @@ async function getSize({baseRef, exec, excludes}) {
 		[
 			'diff',
 			`origin/${baseRef}`,
-			'HEAD', '--numstat',
+			'HEAD',
+			'--no-renames',
+			'--numstat',
 			'--ignore-space-change',
 			'--',
 			'.',
