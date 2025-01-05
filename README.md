@@ -54,11 +54,12 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read       # for checkout
-      pull-requests: write # for creating/adding/removing labels
+      pull-requests: write # for managing labels
     steps:
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # for comparing changes to the target branch
+          persist-credentials: false
 
       # TODO: change to a tag once a release has been created
       - uses: mattdowdell/pr-sizer@main
