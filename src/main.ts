@@ -22,17 +22,17 @@ export async function run(): Promise<void> {
     await mgr.create()
 
     const excludes = await git.excludes(baseRef)
-    console.debug(`excludes: ${excludes}`)
+    console.debug(`excludes: ${excludes.join(' ')}`)
     core.setOutput('excludes', excludes.join(' '))
 
     const { size, includes } = await git.size(baseRef, excludes)
     console.debug(`size: ${size}`)
-    console.debug(`includes: ${includes}`)
+    console.debug(`includes: ${includes.join(' ')}`)
     core.setOutput('size', size)
     core.setOutput('includes', includes.join(' '))
 
     const label = mgr.select(size)
-    console.debug(`label: ${label}`)
+    console.debug(`label: ${label.name}`)
     core.setOutput('label', label.name)
 
     await mgr.assign(label)
