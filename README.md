@@ -4,6 +4,8 @@ A GitHub Action for adding size labels to pull requests.
 
 <!-- TODO: Add picture -->
 
+## Description
+
 There is a limit to how much code can be effectively reviewed in a single pull
 request. A [Smartbear study][1] found that reviewing more than 200-400 lines
 reduces the ability of reviewers to identify defects. Furthermore, smaller
