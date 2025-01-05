@@ -140,7 +140,7 @@ async function gatherExcludes({baseRef, exec}) {
     const s2 = await execute(
         exec,
         'git'
-        ['check-attr', 'linguist-generated', 'linguist-vendored', '--', files...]
+        ['check-attr', 'linguist-generated', 'linguist-vendored', '--', ...files]
     )
     const excludes = s2
         .split(/\r?\n/)
