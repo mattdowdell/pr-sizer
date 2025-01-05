@@ -1,6 +1,3 @@
-/**
- *
- */
 module.exports = async ({context, core, exec, github}) => {
     if (!context.payload.pull_request) {
         console.debug('skipping non-pull request')
