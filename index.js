@@ -186,7 +186,7 @@ async function getSize({baseRef, exec, excludes}) {
     }
 }
 
-async function execute({exec, cmd, args}) {
+async function execute(exec, cmd, args) {
     console.debug(exec, cmd, args)
     let output = '';
     const options = {
