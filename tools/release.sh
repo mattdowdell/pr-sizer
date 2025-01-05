@@ -67,21 +67,11 @@ else
 	exit 1
 fi
 
-# 5. Remind user to update the version field in package.json
-echo -e -n "Make sure the version field in package.json is ${BOLD_BLUE}$new_tag${OFF}. Yes? [Y/${BOLD_UNDERLINED}n${OFF}] "
-read -r YN
-
-if [[ ! ($YN == "y" || $YN == "Y") ]]; then
-	# Package.json version field is not up to date
-	echo -e "Please update the package.json version to ${BOLD_PURPLE}$new_tag${OFF} and commit your changes"
-	exit 1
-fi
-
-# 6. Tag a new release
+# 5. Tag a new release
 git tag "$new_tag" --annotate --message "$new_tag Release"
 echo -e "Tagged: ${BOLD_GREEN}$new_tag${OFF}"
 
-# 7. Set 'is_major_release' variable
+# 6. Set 'is_major_release' variable
 latest_major_release_tag=$(expr "$latest_tag" : "$major_semver_tag_regex")
 new_major_release_tag=$(expr "$new_tag" : "$major_semver_tag_regex")
 
@@ -91,7 +81,7 @@ else
 	is_major_release='no'
 fi
 
-# 8. Point separate major release tag (e.g. v1, v2) to the new release
+# 7. Point separate major release tag (e.g. v1, v2) to the new release
 if [ $is_major_release = 'yes' ]; then
 	# Create a new major verison tag and point it to this release
 	git tag "$new_major_release_tag" --annotate --message "$new_major_release_tag Release"
@@ -102,7 +92,7 @@ else
 	echo -e "Synced ${BOLD_GREEN}$latest_major_release_tag${OFF} with ${BOLD_GREEN}$new_tag${OFF}"
 fi
 
-# 9. Push the new tags (with commits, if any) to remote
+# 8. Push the new tags (with commits, if any) to remote
 git push --follow-tags
 
 if [ $is_major_release = 'yes' ]; then
@@ -114,7 +104,7 @@ else
 	echo -e "Tags: ${BOLD_GREEN}$latest_major_release_tag${OFF} and ${BOLD_GREEN}$new_tag${OFF} pushed to remote"
 fi
 
-# 10. If this is a major release, create a 'releases/v#' branch and push
+# 9. If this is a major release, create a 'releases/v#' branch and push
 if [ $is_major_release = 'yes' ]; then
 	git branch "releases/$latest_major_release_tag" "$latest_major_release_tag"
 	echo -e "Branch: ${BOLD_BLUE}releases/$latest_major_release_tag${OFF} created from ${BOLD_BLUE}$latest_major_release_tag${OFF} tag"
