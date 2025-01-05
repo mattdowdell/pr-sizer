@@ -25,9 +25,10 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Size
         id: size
@@ -35,7 +36,12 @@ jobs:
 
       - name: Output
         run: |
-          echo label=${{ steps.size.outputs.label }}
-          echo size=${{ steps.size.outputs.size }}
-          echo includes=${{ steps.size.outputs.includes }}
-          echo excludes=${{ steps.size.outputs.excludes }}
+          echo label=${LABEL}
+          echo size=${SIZE}
+          echo includes=${INCLUDES}
+          echo excludes=${EXCLUDES}
+        env:
+          LABEL: ${{ steps.size.outputs.label }}
+          SIZE: ${{ steps.size.outputs.size }}
+          INCLUDES: ${{ steps.size.outputs.includes }}
+          EXCLUDES: ${{ steps.size.outputs.excludes }}
