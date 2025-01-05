@@ -72,13 +72,38 @@ inputs:
 outputs:
   label:
     description: 'The label assigned to the pull request.'
+    value: ${{ steps.run.outputs.label }}
   size:
     description: "The calculated size of the pull request's changes."
+    value: ${{ steps.run.outputs.size }}
   includes:
     description: 'The files included in the size calculation.'
+    value: ${{ steps.run.outputs.includes }}
   excludes:
     description: 'The files excluded from the size calculation.'
+    value: ${{ steps.run.outputs.excludes }}
 
 runs:
-  using: node20
-  main: dist/index.js
+  using: "composite"
+  steps:
+    - name: Run
+      id: run
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const script = require('./index.js')
+          await script({context, core, exec, github})
+        github-token: ${{ inputs.github-token }}
+      env:
+        xs_threshold: ${{ inputs.xs-threshold }}
+        s_threshold: ${{ inputs.s-threshold }}
+        m_threshold: ${{ inputs.m-threshold }}
+        l_threshold: ${{ inputs.l-threshold }}
+        xl_threshold: ${{ inputs.xl-threshold }}
+        xs_label: ${{ inputs.xs-label }}
+        s_label: ${{ inputs.s-label }}
+        m_label: ${{ inputs.m-label }}
+        l_label: ${{ inputs.l-label }}
+        xl_label: ${{ inputs.xl-label }}
+        xxl_label: ${{ inputs.xxl-label }}
+        color: ${{ inputs.color }}
