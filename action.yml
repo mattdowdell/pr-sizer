@@ -1,69 +1,66 @@
-name: 'PR Size'
-description:
-  'Add a label to each pull request based on the number of lines changed.'
-author: 'Matt Dowdell'
+name: "PR Size"
+description: "Add a label to each pull request based on the number of lines changed."
+author: "Matt Dowdell"
 
 # https://docs.github.com/en/actions/sharing-automations/creating-actions/metadata-syntax-for-github-actions#branding
 branding:
-  icon: 'bookmark' # OR git-pull-request?
-  color: 'purple'
+  icon: "bookmark" # OR git-pull-request?
+  color: "purple"
 
 inputs:
   xs-threshold:
     description:
-      'The maximum number of lines changed for an extra small label to be
-      assigned (default: 10).'
+      "The maximum number of lines changed for an extra small label to be assigned."
     required: false
-    default: '10'
+    default: "10"
   s-threshold:
     description:
-      'The maximum number of lines changed for a small label to be assigned
-      (default: 100).'
+      "The maximum number of lines changed for a small label to be assigned."
     required: false
-    default: '100'
+    default: "100"
   m-threshold:
     description:
-      'The maximum number of lines changed for a medium label to be assigned
-      (default: 200).'
+      "The maximum number of lines changed for a medium label to be assigned."
     required: false
-    default: '200'
+    default: "200"
   l-threshold:
     description:
-      'The maximum number of lines changed for a large label to be assigned
-      (default: 400).'
+      "The maximum number of lines changed for a large label to be assigned."
     required: false
-    default: '400'
+    default: "400"
   xl-threshold:
     description:
-      'The maximum number of lines changed for a extra large label to be
-      assigned (default: 800).'
+      "The maximum number of lines changed for a extra large label to be assigned."
     required: false
-    default: '800'
+    default: "800"
   xs-label:
-    description: 'The name of the label for very small number of lines changed.'
+    description: "The name of the label for very small number of lines changed."
     required: false
-    default: 'size/XS'
+    default: "size/XS"
   s-label:
-    description: 'The name of the label for small number of lines changed.'
+    description: "The name of the label for small number of lines changed."
     required: false
-    default: 'size/S'
+    default: "size/S"
   m-label:
-    description: 'The name of the label for medium number of lines changed.'
+    description: "The name of the label for medium number of lines changed."
     required: false
-    default: 'size/M'
+    default: "size/M"
   l-label:
-    description: 'The name of the label for large number of lines changed.'
+    description: "The name of the label for large number of lines changed."
     required: false
-    default: 'size/L'
+    default: "size/L"
   xl-label:
-    description: 'The name of the label for very large number of lines changed.'
+    description: "The name of the label for very large number of lines changed."
     required: false
-    default: 'size/XL'
+    default: "size/XL"
   xxl-label:
-    description:
-      'The name of the label for very, very large number of lines changed.'
+    description: "The name of the label for very, very large number of lines changed."
     required: false
-    default: 'size/XXL'
+    default: "size/XXL"
+  color:
+    description: "The colour to use when creating labels."
+    required: false
+    default: "4f348b"
   github-token:
     description: The token to use for managing labels.
     required: false
@@ -71,16 +68,16 @@ inputs:
 
 outputs:
   label:
-    description: 'The label assigned to the pull request.'
+    description: "The label assigned to the pull request."
     value: ${{ steps.run.outputs.label }}
   size:
     description: "The calculated size of the pull request's changes."
     value: ${{ steps.run.outputs.size }}
   includes:
-    description: 'The files included in the size calculation.'
+    description: "The files included in the size calculation."
     value: ${{ steps.run.outputs.includes }}
   excludes:
-    description: 'The files excluded from the size calculation.'
+    description: "The files excluded from the size calculation."
     value: ${{ steps.run.outputs.excludes }}
 
 runs:

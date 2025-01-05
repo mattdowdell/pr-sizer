@@ -81,8 +81,7 @@ jobs:
 
 <!-- TODO: discuss how labels can be modified post-creation -->
 
-[3]:
-  https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication
+[3]: https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication
 
 ## Outputs
 

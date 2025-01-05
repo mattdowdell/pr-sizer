@@ -19,10 +19,10 @@ module.exports = async ({context, core, exec, github}) => {
         core.setOutput('size', size)
         core.setOutput('includes', includes.join(' '))
 
-        const label = selectLabel(size)
+        const label = selectLabel({size})
         core.setOutput('label', label.name)
 
-        await assignLabel(label)
+        await assignLabel({context, github, label})
     } catch (error) {
         if (error instanceof Error) {
             core.setFailed(error.message)
@@ -93,7 +93,7 @@ function selectLabel({size}) {
     return labels().find(l => l.threshold > size)
 }
 
-async function assignLabel({context, github}) {
+async function assignLabel({context, github, label}) {
     const resp = await github.rest.issues.listLabelsOnIssue({
       ...context.repo,
       issue_number: context.issue.number
@@ -130,7 +130,7 @@ async function assignLabel({context, github}) {
 async function gatherExcludes({baseRef, exec}) {
     const s1 = await execute(
         exec,
-        'git'
+        'git',
         ['diff', `origin/${baseRef}`, 'HEAD', '--name-only', '--no-renames']
     )
     const files = s1
@@ -139,7 +139,7 @@ async function gatherExcludes({baseRef, exec}) {
 
     const s2 = await execute(
         exec,
-        'git'
+        'git',
         ['check-attr', 'linguist-generated', 'linguist-vendored', '--', ...files]
     )
     const excludes = s2
@@ -150,7 +150,7 @@ async function gatherExcludes({baseRef, exec}) {
     return [...new Set(excludes)]
 }
 
-async function execute({baseRef, exec, excludes}) {
+async function getSize({baseRef, exec, excludes}) {
     const output = await execute(
         exec,
         'git',
