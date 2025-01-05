@@ -1,4 +1,4 @@
-# pr-size
+# pr-sizer
 
 A GitHub Action for labelling pull requests with size categories.
 
@@ -43,12 +43,12 @@ See [Linguist's overrides][2] for further documentation.
 ## Usage
 
 ```yaml
-name: PR Size
+name: CI
 on:
   pull_request:
 jobs:
-  pr-size:
-    name: PR Size
+  size:
+    name: Size
     runs-on: ubuntu-latest
     permissions:
       contents: read       # for checkout
@@ -56,10 +56,10 @@ jobs:
     steps:
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # for comparing changes to the target branch
 
       # TODO: change to a tag once a release has been created
-      - uses: mattdowdell/pr-size@main
+      - uses: mattdowdell/pr-sizer@main
 ```
 
 ## Inputs
@@ -111,7 +111,7 @@ respective size labels.
 
 ```sh
 gh api \
-  /repos/mattdowdell/pr-size/pulls\?state=closed \
+  /repos/mattdowdell/pr-sizer/pulls\?state=closed \
   --paginate \
   --jq '.[]
     | select((.merged_at != null) and (.base.ref == "main"))
@@ -136,7 +136,7 @@ to the `main` branch between 2 dates with their respective size labels.
 
 ```sh
 gh api \
-  /repos/mattdowdell/pr-size/pulls\?state=closed \
+  /repos/mattdowdell/pr-sizer/pulls\?state=closed \
   --paginate \
   --jq '.[]
     | select(
@@ -171,7 +171,7 @@ the number of pull requests merged to the `main` branch for each size.
 
 ```sh
 gh api \
-  /repos/mattdowdell/pr-size/pulls\?state=closed \
+  /repos/mattdowdell/pr-sizer/pulls\?state=closed \
   --paginate \
   --jq '[ .[] | select(.merged_at != null and .base.ref == "main") ]
     | map({ size: .labels[].name | select(. | startswith("size/")) })
@@ -198,7 +198,7 @@ branch between 2 dates for each size.
 
 ```sh
 gh api \
-  /repos/mattdowdell/pr-size/pulls\?state=closed \
+  /repos/mattdowdell/pr-sizer/pulls\?state=closed \
   --paginate \
   --jq '[ .[] | select(
       .merged_at > "2024-12-19T12:19:42Z" and
@@ -230,7 +230,7 @@ to the `main` branch with a `size/XXL` label.
 
 ```sh
 gh api \
-  /repos/mattdowdell/pr-size/pulls\?state=closed \
+  /repos/mattdowdell/pr-sizer/pulls\?state=closed \
   --jq '.[]
     | select(.merged_at != null and .base.ref == "main" and .labels[].name == "size/XXL")
     | "PR #\(.number)"'
