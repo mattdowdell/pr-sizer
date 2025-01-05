@@ -97,9 +97,11 @@ async function assignLabel({context, github, label}) {
     })
 
     const have = new Set(resp.data.map(l => l.name))
-    const remove = new Set(labels().slice())
+    const remove = new Set(labels())
 
     remove.delete(label)
+    console.debug('have', have)
+    console.debug('remove', remove)
 
     if (!have.has(label.name)) {
       console.debug(`adding label: ${label.name}`)
