@@ -1,6 +1,6 @@
 # pr-sizer
 
-A GitHub Action for labelling pull requests with size categories.
+A GitHub Action for adding size labels to pull requests.
 
 <!-- TODO: Add picture -->
 
@@ -64,23 +64,26 @@ jobs:
 
 ## Inputs
 
-| Name           | Type   | Default           | Description                                                                  |
-| -------------- | ------ | ----------------- | ---------------------------------------------------------------------------- |
-| `xs-threshold` | String | `10`              | The maximum number of lines changed for an extra small label to be assigned. |
-| `s-threshold`  | String | `100`             | The maximum number of lines changed for a small label to be assigned.        |
-| `m-threshold`  | String | `200`             | The maximum number of lines changed for a medium label to be assigned.       |
-| `l-threshold`  | String | `400`             | The maximum number of lines changed for a large label to be assigned.        |
-| `xl-threshold` | String | `800`             | The maximum number of lines changed for an extra large label to be assigned. |
-| `xs-label`     | String | `size/XS`         | The name of the label for a very small number of lines changed.              |
-| `s-label`      | String | `size/S`          | The name of the label for a small number of lines changed.                   |
-| `m-label`      | String | `size/M`          | The name of the label for a medium number of lines changed.                  |
-| `l-label`      | String | `size/L`          | The name of the label for a large number of lines changed.                   |
-| `xl-label`     | String | `size/XL`         | The name of the label for a very large number of lines changed.              |
-| `xxl-label`    | String | `size/XXL`        | The name of the label for a very, very large number of lines changed.        |
+| Name           | Type   | Default                        | Description                                                                  |
+| -------------- | ------ | ------------------------------ | ---------------------------------------------------------------------------- |
+| `xs-threshold` | String | `10`                           | The maximum number of lines changed for an extra small label to be assigned. |
+| `s-threshold`  | String | `100`                          | The maximum number of lines changed for a small label to be assigned.        |
+| `m-threshold`  | String | `200`                          | The maximum number of lines changed for a medium label to be assigned.       |
+| `l-threshold`  | String | `400`                          | The maximum number of lines changed for a large label to be assigned.        |
+| `xl-threshold` | String | `800`                          | The maximum number of lines changed for an extra large label to be assigned. |
+| `xs-label`     | String | `size/XS`                      | The name of the label for a very small number of lines changed.              |
+| `s-label`      | String | `size/S`                       | The name of the label for a small number of lines changed.                   |
+| `m-label`      | String | `size/M`                       | The name of the label for a medium number of lines changed.                  |
+| `l-label`      | String | `size/L`                       | The name of the label for a large number of lines changed.                   |
+| `xl-label`     | String | `size/XL`                      | The name of the label for a very large number of lines changed.              |
+| `xxl-label`    | String | `size/XXL`                     | The name of the label for a very, very large number of lines changed.        |
 | `color`        | String | ![](./assets/box.svg) `4f348b` | The colour to use when creating labels.                                      |
-| `github-token` | String | [github.token][3] | The token to use for managing labels.                                        |
+| `github-token` | String | [github.token][3]              | The token to use for managing labels.                                        |
 
-<!-- TODO: discuss how labels can be modified post-creation -->
+Labels will be automatically created if they do not yet exist with using the
+configured name and colour, along with a hardcoded description. Once they have
+been created, the colour and description will not be modified so can be adjusted
+as needed.
 
 [3]: https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication
 
