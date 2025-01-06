@@ -27,6 +27,9 @@ module.exports = async ({context, core, exec, github}) => {
 	}
 }
 
+/**
+ * Collect the configuration for all labels.
+ */
 function labels() {
 	return [
 		{
@@ -68,6 +71,9 @@ function labels() {
 	]
 }
 
+/**
+ * Create size labels so they can be assigned to pull requests.
+ */
 async function createLabels({context, github}) {
 	const resp = await github.rest.issues.listLabelsForRepo(context.repo)
 	const have = new Set(resp.data.map(l => l.name))
@@ -86,10 +92,16 @@ async function createLabels({context, github}) {
 	}
 }
 
+/**
+ * Map the calculated size to the corresponding label.
+ */
 function selectLabel({size}) {
 	return labels().find(l => l.threshold > size)
 }
 
+/**
+ * Assign the chosen label to the pull request.
+ */
 async function assignLabel({context, github, label}) {
 	const resp = await github.rest.issues.listLabelsOnIssue({
 		...context.repo,
@@ -122,22 +134,23 @@ async function assignLabel({context, github, label}) {
 	}
 }
 
+/**
+ * Gather the files that should be excluded from the size calculation.
+ */
 async function gatherExcludes({baseRef, exec}) {
-	const s1 = await execute(
-		exec,
+	const o1 = await exec.getExecOutput(
 		'git',
 		['diff', `origin/${baseRef}`, 'HEAD', '--name-only', '--no-renames']
 	)
-	const files = s1
+	const files = o1.stdout
 		.split(/\r?\n/)
 		.filter(n => n.length > 0)
 
-	const s2 = await execute(
-		exec,
+	const o2 = await exec.getExecOutput(
 		'git',
 		['check-attr', 'linguist-generated', 'linguist-vendored', '--', ...files]
 	)
-	const excludes = s2
+	const excludes = o2.stdout
 		.split(/\r?\n/)
 		.filter(a => a.endsWith(': set'))
 		.map(a => a.split(':')[0])
@@ -145,9 +158,11 @@ async function gatherExcludes({baseRef, exec}) {
 	return [...new Set(excludes)]
 }
 
+/**
+ * Calculate the size of the change, returning the size and the files used in the calculation.
+ */
 async function getSize({baseRef, exec, excludes}) {
-	const output = await execute(
-		exec,
+	const output = await exec.getExecOutput(
 		'git',
 		[
 			'diff',
@@ -161,7 +176,7 @@ async function getSize({baseRef, exec, excludes}) {
 			...excludes.map(e => `:^${e}`)
 		],
 	);
-	const data = output
+	const data = output.stdout
 		.split(/\r?\n/)
 		.filter(c => c.length > 0)
 		.map(c => {
@@ -178,18 +193,4 @@ async function getSize({baseRef, exec, excludes}) {
 		size: data.reduce((t, d) => t + d.added + d.removed, 0),
 		includes: data.map(d => d.name)
 	}
-}
-
-async function execute(exec, cmd, args) {
-	let output = '';
-	const options = {
-		listeners: {
-			stdout: (data) => {
-				output += data.toString();
-			},
-		},
-	};
-
-	await exec.exec(cmd, args, options);
-	return output
 }
