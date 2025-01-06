@@ -172,7 +172,7 @@ async function getSize({ baseRef, exec, excludes }) {
   const diffOpts = ["--no-renames", "--numstat"];
 
   if (process.env.ignore_whitespace == "true") {
-    diffOpts.append("--ignore-all-space");
+    diffOpts.push("--ignore-all-space");
   }
 
   const output = await exec.getExecOutput("git", [
