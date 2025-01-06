@@ -22,10 +22,6 @@ module.exports = async ({context, core, exec, github}) => {
 		await assignLabel({context, github, label})
 	} catch (error) {
 		if (error instanceof Error) {
-			if (error.message.includes('unknown revision or path not in the working tree')) {
-				core.error('Please confirm that actions/checkout is configured with fetch-depth: 0')
-			}
-
 			core.setFailed(error.message)
 		}
 	}

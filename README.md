@@ -246,3 +246,20 @@ Example output:
 ```text
 PR #26
 ```
+
+## Troubleshooting
+
+### `git diff` failed
+
+If `actions/checkout` was not configured with `fetch-depth: 0`, the following
+error will be output. A branch other than `main` may be output depending on your
+repository settings.
+
+```
+fatal: ambiguous argument 'origin/main': unknown revision or path not in the working tree.
+```
+
+To correct this, set `fetch-depth: 0` for the `actions/checkout` action to fetch
+the history for all branches as shown in [Usage](#usage). This means `git diff`
+can compare the pull request's branch to its target branch and so calculate the
+size of the change.
