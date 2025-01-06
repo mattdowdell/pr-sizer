@@ -139,7 +139,6 @@ async function assignLabel({context, github, label}) {
  */
 async function gatherExcludes({baseRef, exec}) {
 	const o1 = await exec.getExecOutput(
-		exec,
 		'git',
 		['diff', `origin/${baseRef}`, 'HEAD', '--name-only', '--no-renames']
 	)
@@ -148,7 +147,6 @@ async function gatherExcludes({baseRef, exec}) {
 		.filter(n => n.length > 0)
 
 	const o2 = await exec.getExecOutput(
-		exec,
 		'git',
 		['check-attr', 'linguist-generated', 'linguist-vendored', '--', ...files]
 	)
