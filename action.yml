@@ -66,9 +66,10 @@ inputs:
     default: ${{ github.token }}
   ignore-whitespace:
     description:
-      "Whether to ignore whitespace changes at the end of a line. Set to 'true' to enable."
+      "Whether to ignore whitespace changes at the end of a line. Set to 'true' to enable, or
+      'false' to disable."
     required: false
-    default: "false"
+    default: "true"
 
 outputs:
   label:
