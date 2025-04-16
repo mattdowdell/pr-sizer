@@ -76,9 +76,9 @@ function labels() {
  */
 async function createLabels({context, github}) {
 	const resp = await github.rest.issues.listLabelsForRepo(context.repo)
-	const have = new Set(resp.data.map(l => l.name))
+	const have = new Set(resp.data.map(l => l.name.toLowerCase()))
 
-	const missing = labels().filter(l => !have.has(l.name))
+	const missing = labels().filter(l => !have.has(l.name.toLowerCase()))
 
 	for (const label of missing) {
 		console.debug(`creating label: ${label.name}`)
