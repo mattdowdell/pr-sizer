@@ -152,7 +152,7 @@ async function gatherExcludes({baseRef, exec}) {
 	)
 	const excludes = o2.stdout
 		.split(/\r?\n/)
-		.filter(a => a.endsWith(': set'))
+		.filter(a => a.endsWith(': set') || a.endsWith(': true'))
 		.map(a => a.split(':')[0])
 
 	return [...new Set(excludes)]
