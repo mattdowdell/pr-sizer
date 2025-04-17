@@ -61,7 +61,7 @@ jobs:
           fetch-depth: 0 # for comparing changes to the target branch
           persist-credentials: false
 
-      - uses: mattdowdell/pr-sizer@v0.1.0
+      - uses: mattdowdell/pr-sizer@v0.2.0
 ```
 
 ## Inputs
