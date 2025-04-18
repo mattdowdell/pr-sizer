@@ -5,6 +5,11 @@ module.exports = async ({context, core, exec, github}) => {
 	}
 
 	const baseRef = context.payload.pull_request.base.ref
+	
+	const ignoreDeletions = process.env.ignore_deletions === 'true'
+	if (ignoreDeletions) {
+		console.debug(`ignoring deletions to calculate size`)
+	}
 
 	try {
 		await createLabels({context, github})
@@ -12,7 +17,7 @@ module.exports = async ({context, core, exec, github}) => {
 		const excludes = await gatherExcludes({baseRef, exec})
 		core.setOutput('excludes', excludes.join(' '))
 
-		const { size, includes } = await getSize({baseRef, exec, excludes})
+		const { size, includes } = await getSize({baseRef, exec, excludes, ignoreDeletions})
 		core.setOutput('size', size)
 		core.setOutput('includes', includes.join(' '))
 
@@ -161,7 +166,7 @@ async function gatherExcludes({baseRef, exec}) {
 /**
  * Calculate the size of the change, returning the size and the files used in the calculation.
  */
-async function getSize({baseRef, exec, excludes}) {
+async function getSize({baseRef, exec, excludes, ignoreDeletions}) {
 	const output = await exec.getExecOutput(
 		'git',
 		[
@@ -176,7 +181,7 @@ async function getSize({baseRef, exec, excludes}) {
 			...excludes.map(e => `:^${e}`)
 		],
 	);
-	const data = output.stdout
+	let data = output.stdout
 		.split(/\r?\n/)
 		.filter(c => c.length > 0)
 		.map(c => {
@@ -189,8 +194,13 @@ async function getSize({baseRef, exec, excludes}) {
 			}
 		})
 
+	if (ignoreDeletions) {
+		// remove files that only have deletions to avoid having them in the [includes] property below
+		data = data.filter(d => d.added > 0);
+	}
+
 	return {
-		size: data.reduce((t, d) => t + d.added + d.removed, 0),
+		size: data.reduce((t, d) => t + (ignoreDeletions ? d.added : d.added + d.removed), 0),
 		includes: data.map(d => d.name)
 	}
 }

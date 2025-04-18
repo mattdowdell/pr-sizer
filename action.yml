@@ -65,6 +65,10 @@ inputs:
     description: The token to use for managing labels.
     required: false
     default: ${{ github.token }}
+  ignore-deletions:
+    description: "Ignore deletions when calculating the number of lines changed."
+    required: false
+    default: "false"
 
 outputs:
   label:
@@ -104,3 +108,4 @@ runs:
         xl_label: ${{ inputs.xl-label }}
         xxl_label: ${{ inputs.xxl-label }}
         color: ${{ inputs.color }}
+        ignore_deletions: ${{ inputs.ignore-deletions }}
