@@ -240,7 +240,7 @@ async function getSize({ baseRef, exec, excludes, ignores, ignoreDeletedLines })
 
 	return {
 		size: data.reduce((t, d) => t + (ignoreDeletedLines ? d.added : d.added + d.removed), 0),
-		includes: data.map((d) => d.name).filter((f) => !additionalIgnores.contains(f)),
+		includes: data.map((d) => d.name).filter((f) => !additionalIgnores.includes(f)),
 		ignores: additionalIgnores,
 	};
 }
