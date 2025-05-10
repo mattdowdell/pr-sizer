@@ -2,18 +2,18 @@
 
 module.exports = async ({ context, core, exec, github }) => {
 	if (!context.payload.pull_request) {
-		console.debug("skipping non-pull request");
+		console.debug('skipping non-pull request');
 		return;
 	}
 
 	const baseRef = context.payload.pull_request.base.ref;
 
-	const ignoreDeletedFiles = process.env.ignore_deleted_files === "true";
+	const ignoreDeletedFiles = process.env.ignore_deleted_files === 'true';
 	if (ignoreDeletedFiles) {
 		console.debug(`ignoring deleted files to calculate size`);
 	}
 
-	const ignoreDeletedLines = process.env.ignore_deleted_lines === "true";
+	const ignoreDeletedLines = process.env.ignore_deleted_lines === 'true';
 	if (ignoreDeletedLines) {
 		console.debug(`ignoring deleted lines to calculate size`);
 	}
@@ -22,33 +22,23 @@ module.exports = async ({ context, core, exec, github }) => {
 		await createLabels({ context, github });
 
 		const excludes = await gatherExcludes({ baseRef, exec });
-		core.setOutput("excludes", excludes.join(" "));
+		core.setOutput('excludes', excludes.join(' '));
 
-		let ignores = await gatherIgnores({
-			baseRef,
-			exec,
-			ignoreDeletedFiles,
-		});
+		let ignores = await gatherIgnores({ baseRef, exec, ignoreDeletedFiles });
 
 		const {
 			size,
 			includes,
 			ignores: additionalIgnores,
-		} = await getSize({
-			baseRef,
-			exec,
-			excludes,
-			ignores,
-			ignoreDeletedLines,
-		});
-		core.setOutput("size", size);
-		core.setOutput("includes", includes.join(" "));
+		} = await getSize({ baseRef, exec, excludes, ignores, ignoreDeletedLines });
+		core.setOutput('size', size);
+		core.setOutput('includes', includes.join(' '));
 
 		ignores = [...new Set([...ignores, ...additionalIgnores])];
-		core.setOutput("ignores", ignores.join(" "));
+		core.setOutput('ignores', ignores.join(' '));
 
 		const label = selectLabel({ size });
-		core.setOutput("label", label.name);
+		core.setOutput('label', label.name);
 
 		await assignLabel({ context, github, label });
 	} catch (error) {
@@ -67,40 +57,37 @@ function labels() {
 			name: process.env.xs_label,
 			color: process.env.color,
 			threshold: process.env.xs_threshold,
-			description:
-				"Pull requests with a very small number of lines changed.",
+			description: 'Pull requests with a very small number of lines changed.',
 		},
 		{
 			name: process.env.s_label,
 			color: process.env.color,
 			threshold: process.env.s_threshold,
-			description: "Pull requests with a small number of lines changed.",
+			description: 'Pull requests with a small number of lines changed.',
 		},
 		{
 			name: process.env.m_label,
 			color: process.env.color,
 			threshold: process.env.m_threshold,
-			description: "Pull requests with a medium number of lines changed.",
+			description: 'Pull requests with a medium number of lines changed.',
 		},
 		{
 			name: process.env.l_label,
 			color: process.env.color,
 			threshold: process.env.l_threshold,
-			description: "Pull requests with a large number of lines changed.",
+			description: 'Pull requests with a large number of lines changed.',
 		},
 		{
 			name: process.env.xl_label,
 			color: process.env.color,
 			threshold: process.env.xl_threshold,
-			description:
-				"Pull requests with a very large number of lines changed.",
+			description: 'Pull requests with a very large number of lines changed.',
 		},
 		{
 			name: process.env.xxl_label,
 			color: process.env.color,
 			threshold: Infinity,
-			description:
-				"Pull requests with a very, very large number of lines changed.",
+			description: 'Pull requests with a very, very large number of lines changed.',
 		},
 	];
 }
@@ -174,26 +161,26 @@ async function assignLabel({ context, github, label }) {
  * Gather the files that should be excluded from the size calculation.
  */
 async function gatherExcludes({ baseRef, exec }) {
-	const o1 = await exec.getExecOutput("git", [
-		"diff",
+	const o1 = await exec.getExecOutput('git', [
+		'diff',
 		`origin/${baseRef}`,
-		"HEAD",
-		"--name-only",
-		"--no-renames",
+		'HEAD',
+		'--name-only',
+		'--no-renames',
 	]);
 	const files = o1.stdout.split(/\r?\n/).filter((n) => n.length > 0);
 
-	const o2 = await exec.getExecOutput("git", [
-		"check-attr",
-		"linguist-generated",
-		"linguist-vendored",
-		"--",
+	const o2 = await exec.getExecOutput('git', [
+		'check-attr',
+		'linguist-generated',
+		'linguist-vendored',
+		'--',
 		...files,
 	]);
 	const excludes = o2.stdout
 		.split(/\r?\n/)
-		.filter((a) => a.endsWith(": set") || a.endsWith(": true"))
-		.map((a) => a.split(":")[0]);
+		.filter((a) => a.endsWith(': set') || a.endsWith(': true'))
+		.map((a) => a.split(':')[0]);
 
 	return [...new Set(excludes)];
 }
@@ -204,12 +191,12 @@ async function gatherExcludes({ baseRef, exec }) {
 async function gatherIgnores({ baseRef, exec, ignoreDeletedFiles }) {
 	let files = [];
 	if (ignoreDeletedFiles) {
-		const o1 = await exec.getExecOutput("git", [
-			"log",
-			"--diff-filter=D",
-			"--pretty=format:",
-			"--name-only",
-			"--no-commit-id",
+		const o1 = await exec.getExecOutput('git', [
+			'log',
+			'--diff-filter=D',
+			'--pretty=format:',
+			'--name-only',
+			'--no-commit-id',
 			`origin/${baseRef}..HEAD`,
 		]);
 		files.push(...o1.stdout.split(/\r?\n/).filter((n) => n.length > 0));
@@ -220,23 +207,17 @@ async function gatherIgnores({ baseRef, exec, ignoreDeletedFiles }) {
 /**
  * Calculate the size of the change, returning the size and the files used in the calculation.
  */
-async function getSize({
-	baseRef,
-	exec,
-	excludes,
-	ignores,
-	ignoreDeletedLines,
-}) {
+async function getSize({ baseRef, exec, excludes, ignores, ignoreDeletedLines }) {
 	const ignoreAndExclude = [...excludes, ...ignores];
-	const output = await exec.getExecOutput("git", [
-		"diff",
+	const output = await exec.getExecOutput('git', [
+		'diff',
 		`origin/${baseRef}`,
-		"HEAD",
-		"--no-renames",
-		"--numstat",
-		"--ignore-space-change",
-		"--",
-		".",
+		'HEAD',
+		'--no-renames',
+		'--numstat',
+		'--ignore-space-change',
+		'--',
+		'.',
 		...ignoreAndExclude.map((e) => `:^${e}`),
 	]);
 	let data = output.stdout
@@ -254,19 +235,12 @@ async function getSize({
 
 	let additionalIgnores = [];
 	if (ignoreDeletedLines) {
-		additionalIgnores = data
-			.filter((d) => d.added === 0 && d.removed > 0)
-			.map((d) => d.name);
+		additionalIgnores = data.filter((d) => d.added === 0 && d.removed > 0).map((d) => d.name);
 	}
 
 	return {
-		size: data.reduce(
-			(t, d) => t + (ignoreDeletedLines ? d.added : d.added + d.removed),
-			0,
-		),
-		includes: data
-			.map((d) => d.name)
-			.filter((f) => !additionalIgnores.includes(f)),
+		size: data.reduce((t, d) => t + (ignoreDeletedLines ? d.added : d.added + d.removed), 0),
+		includes: data.map((d) => d.name).filter((f) => !additionalIgnores.contains(f)),
 		ignores: additionalIgnores,
 	};
 }
