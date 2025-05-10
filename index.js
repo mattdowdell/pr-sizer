@@ -266,7 +266,7 @@ async function getSize({
 		),
 		includes: data
 			.map((d) => d.name)
-			.filter((f) => !additionalIgnores.contains(f)),
+			.filter((f) => !additionalIgnores.includes(f)),
 		ignores: additionalIgnores,
 	};
 }
