@@ -1,3 +1,4 @@
+---
 name: CI
 
 on:
@@ -12,8 +13,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   size:
@@ -21,11 +21,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write
+      pull-requests: write  # to add labels to pull requests
     steps:
       - name: Checkout
-        id: checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5.0.0
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -42,8 +41,47 @@ jobs:
           echo size=${SIZE}
           echo includes=${INCLUDES}
           echo excludes=${EXCLUDES}
+          echo ignores=${IGNORES}
         env:
           LABEL: ${{ steps.size.outputs.label }}
           SIZE: ${{ steps.size.outputs.size }}
           INCLUDES: ${{ steps.size.outputs.includes }}
           EXCLUDES: ${{ steps.size.outputs.excludes }}
+          IGNORES: ${{ steps.size.outputs.ignores }}
+
+  yamlfmt:
+    name: Format YAML
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5.0.0
+        with:
+          persist-credentials: false
+
+      - name: Setup Go
+        uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00  # v6.0.0
+
+      - name: Run
+        run: |
+          go install github.com/google/yamlfmt/cmd/yamlfmt@latest
+          yamlfmt -lint .
+
+  zizmor:
+    name: Zizmor Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write  # to add code scanning alerts
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5.0.0
+        with:
+          persist-credentials: false
+
+      - name: Scan
+        uses: zizmorcore/zizmor-action@e673c3917a1aef3c65c972347ed84ccd013ecda4  # v0.2.0
+        with:
+          persona: pedantic
+

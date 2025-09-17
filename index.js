@@ -1,3 +1,5 @@
+/*global console, module, process*/
+
 module.exports = async ({ context, core, exec, github }) => {
   if (!context.payload.pull_request) {
     console.debug("skipping non-pull request");
@@ -6,15 +8,34 @@ module.exports = async ({ context, core, exec, github }) => {
 
   const baseRef = context.payload.pull_request.base.ref;
 
+  const ignoreDeletedFiles = process.env.ignore_deleted_files === "true";
+  if (ignoreDeletedFiles) {
+    console.debug(`ignoring deleted files to calculate size`);
+  }
+
+  const ignoreDeletedLines = process.env.ignore_deleted_lines === "true";
+  if (ignoreDeletedLines) {
+    console.debug(`ignoring deleted lines to calculate size`);
+  }
+
   try {
     await createLabels({ context, github });
 
     const excludes = await gatherExcludes({ baseRef, exec });
     core.setOutput("excludes", excludes.join(" "));
 
-    const { size, includes } = await getSize({ baseRef, exec, excludes });
+    let ignores = await gatherIgnores({ baseRef, exec, ignoreDeletedFiles });
+
+    const {
+      size,
+      includes,
+      ignores: additionalIgnores,
+    } = await getSize({ baseRef, exec, excludes, ignores, ignoreDeletedLines });
     core.setOutput("size", size);
     core.setOutput("includes", includes.join(" "));
+
+    ignores = [...new Set([...ignores, ...additionalIgnores])];
+    core.setOutput("ignores", ignores.join(" "));
 
     const label = selectLabel({ size });
     core.setOutput("label", label.name);
@@ -77,9 +98,8 @@ function labels() {
  */
 async function createLabels({ context, github }) {
   const resp = await github.rest.issues.listLabelsForRepo(context.repo);
-  const have = new Set(resp.data.map((l) => l.name));
-
-  const missing = labels().filter((l) => !have.has(l.name));
+  const have = new Set(resp.data.map((l) => l.name.toLowerCase()));
+  const missing = labels().filter((l) => !have.has(l.name.toLowerCase()));
 
   for (const label of missing) {
     console.debug(`creating label: ${label.name}`);
@@ -150,6 +170,10 @@ async function gatherExcludes({ baseRef, exec }) {
   ]);
   const files = o1.stdout.split(/\r?\n/).filter((n) => n.length > 0);
 
+  if (!files.length) {
+    return [];
+  }
+
   const o2 = await exec.getExecOutput("git", [
     "check-attr",
     "linguist-generated",
@@ -159,16 +183,42 @@ async function gatherExcludes({ baseRef, exec }) {
   ]);
   const excludes = o2.stdout
     .split(/\r?\n/)
-    .filter((a) => a.endsWith(": set"))
+    .filter((a) => a.endsWith(": set") || a.endsWith(": true"))
     .map((a) => a.split(":")[0]);
 
   return [...new Set(excludes)];
 }
 
 /**
+ * Gather the files to ignore from the size calculation.
+ */
+async function gatherIgnores({ baseRef, exec, ignoreDeletedFiles }) {
+  let files = [];
+  if (ignoreDeletedFiles) {
+    const o1 = await exec.getExecOutput("git", [
+      "log",
+      "--diff-filter=D",
+      "--pretty=format:",
+      "--name-only",
+      "--no-commit-id",
+      `origin/${baseRef}..HEAD`,
+    ]);
+    files.push(...o1.stdout.split(/\r?\n/).filter((n) => n.length > 0));
+  }
+  return [...new Set(files)];
+}
+
+/**
  * Calculate the size of the change, returning the size and the files used in the calculation.
  */
-async function getSize({ baseRef, exec, excludes }) {
+async function getSize({
+  baseRef,
+  exec,
+  excludes,
+  ignores,
+  ignoreDeletedLines,
+}) {
+  const ignoreAndExclude = [...excludes, ...ignores];
   const diffOpts = ["--no-renames", "--numstat"];
 
   if (process.env.ignore_whitespace == "true") {
@@ -182,7 +232,7 @@ async function getSize({ baseRef, exec, excludes }) {
     ...diffOpts,
     "--",
     ".",
-    ...excludes.map((e) => `:^${e}`),
+    ...ignoreAndExclude.map((e) => `:^${e}`),
   ]);
   const data = output.stdout
     .split(/\r?\n/)
@@ -197,8 +247,21 @@ async function getSize({ baseRef, exec, excludes }) {
       };
     });
 
+  let additionalIgnores = [];
+  if (ignoreDeletedLines) {
+    additionalIgnores = data
+      .filter((d) => d.added === 0 && d.removed > 0)
+      .map((d) => d.name);
+  }
+
   return {
-    size: data.reduce((t, d) => t + d.added + d.removed, 0),
-    includes: data.map((d) => d.name),
+    size: data.reduce(
+      (t, d) => t + (ignoreDeletedLines ? d.added : d.added + d.removed),
+      0,
+    ),
+    includes: data
+      .map((d) => d.name)
+      .filter((f) => !additionalIgnores.includes(f)),
+    ignores: additionalIgnores,
   };
 }
