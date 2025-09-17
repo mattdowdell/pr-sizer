@@ -1,0 +1,9 @@
+---
+# https://github.com/google/yamlfmt/blob/main/docs/config-file.md
+
+formatter:
+  eof_newline: true
+  include_document_start: true
+  pad_line_comments: 2
+  retain_line_breaks: true
+  trim_trailing_whitespace: true
