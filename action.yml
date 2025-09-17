@@ -5,7 +5,7 @@ author: "Matt Dowdell"
 
 # https://docs.github.com/en/actions/sharing-automations/creating-actions/metadata-syntax-for-github-actions#branding
 branding:
-  icon: "bookmark" # OR git-pull-request?
+  icon: "bookmark"
   color: "purple"
 
 inputs:
@@ -92,7 +92,7 @@ runs:
   steps:
     - name: Run
       id: run
-      uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
+      uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd  # v8.0.0
       with:
         script: |
           const path = require('path');
