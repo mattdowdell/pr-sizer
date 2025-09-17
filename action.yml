@@ -97,7 +97,7 @@ runs:
         script: |
           const path = require('path');
 
-          const script = require(path.join(process.env.GITHUB_ACTION_PATH, 'index.js');
+          const script = require(path.join(process.env.GITHUB_ACTION_PATH, 'index.js'));
           await script({context, core, exec, github});
         github-token: ${{ inputs.github-token }}
       env:
