@@ -70,9 +70,7 @@ inputs:
     required: false
     default: "false"
   ignore-whitespace:
-    description:
-      "Whether to ignore whitespace changes at the end of a line. Set to 'true' to enable, or
-      'false' to disable."
+    description: "Whether to ignore whitespace changes at the end of a line. Set to 'true' to enable, or 'false' to disable."
     required: false
     default: "true"
 
