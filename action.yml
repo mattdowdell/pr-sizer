@@ -69,6 +69,10 @@ inputs:
     description: "Ignore lines deletion when calculating the number of lines changed."
     required: false
     default: "false"
+  ignore-whitespace:
+    description: "Whether to ignore whitespace changes at the end of a line. Set to 'true' to enable, or 'false' to disable."
+    required: false
+    default: "true"
 
 outputs:
   label:
@@ -115,3 +119,4 @@ runs:
         color: ${{ inputs.color }}
         ignore_deleted_files: ${{ inputs.ignore-deleted-files }}
         ignore_deleted_lines: ${{ inputs.ignore-deleted-lines }}
+        ignore_whitespace: ${{ inputs.ignore-whitespace }}
