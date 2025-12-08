@@ -99,7 +99,6 @@ function labels() {
 async function createLabels({ context, github }) {
   const resp = await github.rest.issues.listLabelsForRepo(context.repo);
   const have = new Set(resp.data.map((l) => l.name.toLowerCase()));
-
   const missing = labels().filter((l) => !have.has(l.name.toLowerCase()));
 
   for (const label of missing) {
@@ -220,18 +219,22 @@ async function getSize({
   ignoreDeletedLines,
 }) {
   const ignoreAndExclude = [...excludes, ...ignores];
+  const diffOpts = ["--no-renames", "--numstat"];
+
+  if (process.env.ignore_whitespace == "true") {
+    diffOpts.push("--ignore-all-space");
+  }
+
   const output = await exec.getExecOutput("git", [
     "diff",
     `origin/${baseRef}`,
     "HEAD",
-    "--no-renames",
-    "--numstat",
-    "--ignore-space-change",
+    ...diffOpts,
     "--",
     ".",
     ...ignoreAndExclude.map((e) => `:^${e}`),
   ]);
-  let data = output.stdout
+  const data = output.stdout
     .split(/\r?\n/)
     .filter((c) => c.length > 0)
     .map((c) => {
