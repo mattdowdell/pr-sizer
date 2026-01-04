@@ -56,12 +56,12 @@ jobs:
       contents: read       # for checkout
       pull-requests: write # for managing labels
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0 # for comparing changes to the target branch
           persist-credentials: false
 
-      - uses: mattdowdell/pr-sizer@v0.3.1
+      - uses: mattdowdell/pr-sizer@v0.4.0
 ```
 
 ## Inputs
@@ -81,8 +81,9 @@ jobs:
 | `xxl-label`             | String  | `size/XXL`                     | The name of the label for a very, very large number of lines changed.        |
 | `color`                 | String  | ![](./assets/box.svg) `4f348b` | The colour to use when creating labels.                                      |
 | `github-token`          | String  | [github.token][3]              | The token to use for managing labels.                                        |
-| `ignore-deleted-files`  | Boolean | false                          | Set to ignore deleted files when calculating the number of lines changed.    |
-| `ignore-deleted-lines`  | Boolean | false                          | Set to ignore deleted lines when calculating the number of lines changed.    |
+| `ignore-deleted-files`  | Boolean | `false`                        | Set to ignore deleted files when calculating the number of lines changed.    |
+| `ignore-deleted-lines`  | Boolean | `false`                        | Set to ignore deleted lines when calculating the number of lines changed.    |
+| `dry-run`               | Boolean | `false`                        | Skip creating labels and assigning a label to the PR.                        |
 
 Labels will be automatically created if they do not yet exist with using the
 configured name and colour, along with a hardcoded description. Once they have
