@@ -32,6 +32,8 @@ jobs:
       - name: Size
         id: size
         uses: ./
+        with:
+          dry-run: false
 
       - name: Output
         run: |
