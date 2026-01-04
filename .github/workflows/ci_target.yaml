@@ -1,0 +1,47 @@
+---
+name: CI (target)
+
+on:
+  pull_request_target:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  size:
+    name: Size
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # TODO: pull-requests: write?
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8  # v6.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Size
+        id: size
+        uses: ./
+        with:
+          dry-run: true
+
+      - name: Output
+        run: |
+          echo label=${LABEL}
+          echo size=${SIZE}
+          echo includes=${INCLUDES}
+          echo excludes=${EXCLUDES}
+          echo ignores=${IGNORES}
+        env:
+          LABEL: ${{ steps.size.outputs.label }}
+          SIZE: ${{ steps.size.outputs.size }}
+          INCLUDES: ${{ steps.size.outputs.includes }}
+          EXCLUDES: ${{ steps.size.outputs.excludes }}
+          IGNORES: ${{ steps.size.outputs.ignores }}

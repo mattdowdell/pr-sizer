@@ -18,8 +18,12 @@ module.exports = async ({ context, core, exec, github }) => {
     console.debug(`ignoring deleted lines to calculate size`);
   }
 
+  const dryRun = process.env.dry_run === "true";
+
   try {
-    await createLabels({ context, github });
+    if (!dryRun) {
+      await createLabels({ context, github });
+    }
 
     const excludes = await gatherExcludes({ baseRef, exec });
     core.setOutput("excludes", excludes.join(" "));
@@ -40,7 +44,9 @@ module.exports = async ({ context, core, exec, github }) => {
     const label = selectLabel({ size });
     core.setOutput("label", label.name);
 
-    await assignLabel({ context, github, label });
+    if (!dryRun) {
+      await assignLabel({ context, github, label });
+    }
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message);
