@@ -69,6 +69,10 @@ inputs:
     description: "Ignore lines deletion when calculating the number of lines changed."
     required: false
     default: "false"
+  dry-run:
+    description: "Skip creating labels and assigning a label to the pull request."
+    required: false
+    default: "false"
 
 outputs:
   label:
@@ -90,6 +94,11 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - name: Debug
+      shell: bash
+      run: |
+        git log -n 1
+
     - name: Run
       id: run
       uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd  # v8.0.0
@@ -115,3 +124,4 @@ runs:
         color: ${{ inputs.color }}
         ignore_deleted_files: ${{ inputs.ignore-deleted-files }}
         ignore_deleted_lines: ${{ inputs.ignore-deleted-lines }}
+        dry_run: ${{ inputs.dry-run }}
