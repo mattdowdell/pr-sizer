@@ -28,10 +28,13 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+          ref: ${{ github.head_ref }}
 
       - name: Size
         id: size
         uses: ./
+        # with:
+        #   dry-run: false
 
       - name: Output
         run: |
