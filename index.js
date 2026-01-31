@@ -170,8 +170,7 @@ async function assignLabel({ context, github, label }) {
 async function gatherExcludes({ baseRef, exec }) {
   const o1 = await exec.getExecOutput("git", [
     "diff",
-    `origin/${baseRef}`,
-    "HEAD",
+    `origin/${baseRef}...HEAD`,
     "--name-only",
     "--no-renames",
   ]);
@@ -208,7 +207,7 @@ async function gatherIgnores({ baseRef, exec, ignoreDeletedFiles }) {
       "--pretty=format:",
       "--name-only",
       "--no-commit-id",
-      `origin/${baseRef}..HEAD`,
+      `origin/${baseRef}...HEAD`,
     ]);
     files.push(...o1.stdout.split(/\r?\n/).filter((n) => n.length > 0));
   }
@@ -228,8 +227,7 @@ async function getSize({
   const ignoreAndExclude = [...excludes, ...ignores];
   const output = await exec.getExecOutput("git", [
     "diff",
-    `origin/${baseRef}`,
-    "HEAD",
+    `origin/${baseRef}...HEAD`,
     "--no-renames",
     "--numstat",
     "--ignore-space-change",
