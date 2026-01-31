@@ -25,10 +25,10 @@ module.exports = async ({ context, core, exec, github }) => {
       await createLabels({ context, github });
     }
 
-    const excludes = await gatherExcludes({ , exec });
+    const excludes = await gatherExcludes({ baseRef, exec });
     core.setOutput("excludes", excludes.join(" "));
 
-    let ignores = await gatherIgnores({ , exec, ignoreDeletedFiles });
+    let ignores = await gatherIgnores({ baseRef, exec, ignoreDeletedFiles });
 
     const {
       size,
