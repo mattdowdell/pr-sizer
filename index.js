@@ -25,10 +25,10 @@ module.exports = async ({ context, core, exec, github }) => {
       await createLabels({ context, github });
     }
 
-    const excludes = await gatherExcludes({ baseRef, exec });
+    const excludes = await gatherExcludes({ , exec });
     core.setOutput("excludes", excludes.join(" "));
 
-    let ignores = await gatherIgnores({ baseRef, exec, ignoreDeletedFiles });
+    let ignores = await gatherIgnores({ , exec, ignoreDeletedFiles });
 
     const {
       size,
@@ -170,7 +170,7 @@ async function assignLabel({ context, github, label }) {
 async function gatherExcludes({ baseRef, exec }) {
   const o1 = await exec.getExecOutput("git", [
     "diff",
-    `${baseRef}...HEAD`,
+    `origin/${baseRef}...HEAD`,
     "--name-only",
     "--no-renames",
   ]);
@@ -207,7 +207,7 @@ async function gatherIgnores({ baseRef, exec, ignoreDeletedFiles }) {
       "--pretty=format:",
       "--name-only",
       "--no-commit-id",
-      `${baseRef}...HEAD`,
+      `origin/${baseRef}...HEAD`,
     ]);
     files.push(...o1.stdout.split(/\r?\n/).filter((n) => n.length > 0));
   }
@@ -227,7 +227,7 @@ async function getSize({
   const ignoreAndExclude = [...excludes, ...ignores];
   const output = await exec.getExecOutput("git", [
     "diff",
-    `${baseRef}...HEAD`,
+    `origin/${baseRef}...HEAD`,
     "--no-renames",
     "--numstat",
     "--ignore-space-change",
