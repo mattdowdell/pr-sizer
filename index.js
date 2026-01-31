@@ -25,16 +25,28 @@ module.exports = async ({ context, core, exec, github }) => {
       await createLabels({ context, github });
     }
 
-    const excludes = await gatherExcludes({ baseRef, exec });
+    const excludes = await gatherExcludes({ baseRef, core, exec });
     core.setOutput("excludes", excludes.join(" "));
 
-    let ignores = await gatherIgnores({ baseRef, exec, ignoreDeletedFiles });
+    let ignores = await gatherIgnores({
+      baseRef,
+      core,
+      exec,
+      ignoreDeletedFiles,
+    });
 
     const {
       size,
       includes,
       ignores: additionalIgnores,
-    } = await getSize({ baseRef, exec, excludes, ignores, ignoreDeletedLines });
+    } = await getSize({
+      baseRef,
+      core,
+      exec,
+      excludes,
+      ignores,
+      ignoreDeletedLines,
+    });
     core.setOutput("size", size);
     core.setOutput("includes", includes.join(" "));
 
@@ -167,19 +179,23 @@ async function assignLabel({ context, github, label }) {
 /**
  * Gather the files that should be excluded from the size calculation.
  */
-async function gatherExcludes({ baseRef, exec }) {
+async function gatherExcludes({ baseRef, core, exec }) {
+  core.startGroup("Collect names");
   const o1 = await exec.getExecOutput("git", [
     "diff",
     `origin/${baseRef}...HEAD`,
     "--name-only",
     "--no-renames",
   ]);
+  core.endGroup();
+
   const files = o1.stdout.split(/\r?\n/).filter((n) => n.length > 0);
 
   if (!files.length) {
     return [];
   }
 
+  core.startGroup("Check attributes");
   const o2 = await exec.getExecOutput("git", [
     "check-attr",
     "linguist-generated",
@@ -187,6 +203,8 @@ async function gatherExcludes({ baseRef, exec }) {
     "--",
     ...files,
   ]);
+  core.endGroup();
+
   const excludes = o2.stdout
     .split(/\r?\n/)
     .filter((a) => a.endsWith(": set") || a.endsWith(": true"))
@@ -198,9 +216,11 @@ async function gatherExcludes({ baseRef, exec }) {
 /**
  * Gather the files to ignore from the size calculation.
  */
-async function gatherIgnores({ baseRef, exec, ignoreDeletedFiles }) {
+async function gatherIgnores({ baseRef, core, exec, ignoreDeletedFiles }) {
   let files = [];
+
   if (ignoreDeletedFiles) {
+    core.setGroup("Collect deleted files");
     const o1 = await exec.getExecOutput("git", [
       "log",
       "--diff-filter=D",
@@ -209,8 +229,11 @@ async function gatherIgnores({ baseRef, exec, ignoreDeletedFiles }) {
       "--no-commit-id",
       `origin/${baseRef}...HEAD`,
     ]);
+    core.endGroup();
+
     files.push(...o1.stdout.split(/\r?\n/).filter((n) => n.length > 0));
   }
+
   return [...new Set(files)];
 }
 
@@ -219,12 +242,15 @@ async function gatherIgnores({ baseRef, exec, ignoreDeletedFiles }) {
  */
 async function getSize({
   baseRef,
+  core,
   exec,
   excludes,
   ignores,
   ignoreDeletedLines,
 }) {
   const ignoreAndExclude = [...excludes, ...ignores];
+
+  core.startGroup("Collect diff sizes");
   const output = await exec.getExecOutput("git", [
     "diff",
     `origin/${baseRef}...HEAD`,
@@ -235,6 +261,8 @@ async function getSize({
     ".",
     ...ignoreAndExclude.map((e) => `:^${e}`),
   ]);
+  core.endGroup();
+
   let data = output.stdout
     .split(/\r?\n/)
     .filter((c) => c.length > 0)
