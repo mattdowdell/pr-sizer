@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "prettier": "^3.8.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "eslint": "^9.39.2",
+    "globals": "^17.3.0"
+  }
+}
