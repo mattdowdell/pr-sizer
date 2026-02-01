@@ -49,6 +49,43 @@ jobs:
           EXCLUDES: ${{ steps.size.outputs.excludes }}
           IGNORES: ${{ steps.size.outputs.ignores }}
 
+  prettier:
+    name: Format JavaScript
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@3d267786b128fe76c2f16a390aa2448b815359f3  # v2.1.2
+
+      - name: Run Prettier
+        run: |
+          bunx prettier . --check
+
+  eslint:
+    name: Lint JavaScript
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@3d267786b128fe76c2f16a390aa2448b815359f3  # v2.1.2
+
+      - name: Run ESLint
+        run: |
+          bunx eslint .
+
+
   yamlfmt:
     name: Format YAML
     runs-on: ubuntu-latest
@@ -84,4 +121,3 @@ jobs:
         uses: zizmorcore/zizmor-action@135698455da5c3b3e55f73f4419e481ab68cdd95  # v0.4.1
         with:
           persona: pedantic
-

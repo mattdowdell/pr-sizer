@@ -1,0 +1,3 @@
+# use yamlfmt for yaml files
+*.yml
+*.yaml

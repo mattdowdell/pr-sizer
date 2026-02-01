@@ -1,4 +1,4 @@
-/*global console, module, process*/
+/*global process*/
 
 module.exports = async ({ context, core, exec, github }) => {
   if (!context.payload.pull_request) {
