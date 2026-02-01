@@ -33,7 +33,8 @@ jobs:
         id: size
         uses: ./
         # with:
-        #   dry-run: false
+        #   dry-run: true
+        #   ignore-whitespace: false
 
       - name: Output
         run: |
