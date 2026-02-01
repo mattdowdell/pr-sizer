@@ -53,7 +53,7 @@ jobs:
     name: Size
     runs-on: ubuntu-latest
     permissions:
-      contents: read       # for checkout
+      contents: read # for checkout
       pull-requests: write # for managing labels
     steps:
       - uses: actions/checkout@v6
@@ -66,24 +66,24 @@ jobs:
 
 ## Inputs
 
-| Name                    | Type    | Default                        | Description                                                                  |
-| ----------------------- | ------- | ------------------------------ | ---------------------------------------------------------------------------- |
-| `xs-threshold`          | String  | `10`                           | The maximum number of lines changed for an extra small label to be assigned. |
-| `s-threshold`           | String  | `100`                          | The maximum number of lines changed for a small label to be assigned.        |
-| `m-threshold`           | String  | `200`                          | The maximum number of lines changed for a medium label to be assigned.       |
-| `l-threshold`           | String  | `400`                          | The maximum number of lines changed for a large label to be assigned.        |
-| `xl-threshold`          | String  | `800`                          | The maximum number of lines changed for an extra large label to be assigned. |
-| `xs-label`              | String  | `size/XS`                      | The name of the label for a very small number of lines changed.              |
-| `s-label`               | String  | `size/S`                       | The name of the label for a small number of lines changed.                   |
-| `m-label`               | String  | `size/M`                       | The name of the label for a medium number of lines changed.                  |
-| `l-label`               | String  | `size/L`                       | The name of the label for a large number of lines changed.                   |
-| `xl-label`              | String  | `size/XL`                      | The name of the label for a very large number of lines changed.              |
-| `xxl-label`             | String  | `size/XXL`                     | The name of the label for a very, very large number of lines changed.        |
-| `color`                 | String  | ![](./assets/box.svg) `4f348b` | The colour to use when creating labels.                                      |
-| `github-token`          | String  | [github.token][3]              | The token to use for managing labels.                                        |
-| `ignore-deleted-files`  | Boolean | `false`                        | Set to ignore deleted files when calculating the number of lines changed.    |
-| `ignore-deleted-lines`  | Boolean | `false`                        | Set to ignore deleted lines when calculating the number of lines changed.    |
-| `dry-run`               | Boolean | `false`                        | Skip creating labels and assigning a label to the PR.                        |
+| Name                   | Type    | Default                        | Description                                                                  |
+| ---------------------- | ------- | ------------------------------ | ---------------------------------------------------------------------------- |
+| `xs-threshold`         | String  | `10`                           | The maximum number of lines changed for an extra small label to be assigned. |
+| `s-threshold`          | String  | `100`                          | The maximum number of lines changed for a small label to be assigned.        |
+| `m-threshold`          | String  | `200`                          | The maximum number of lines changed for a medium label to be assigned.       |
+| `l-threshold`          | String  | `400`                          | The maximum number of lines changed for a large label to be assigned.        |
+| `xl-threshold`         | String  | `800`                          | The maximum number of lines changed for an extra large label to be assigned. |
+| `xs-label`             | String  | `size/XS`                      | The name of the label for a very small number of lines changed.              |
+| `s-label`              | String  | `size/S`                       | The name of the label for a small number of lines changed.                   |
+| `m-label`              | String  | `size/M`                       | The name of the label for a medium number of lines changed.                  |
+| `l-label`              | String  | `size/L`                       | The name of the label for a large number of lines changed.                   |
+| `xl-label`             | String  | `size/XL`                      | The name of the label for a very large number of lines changed.              |
+| `xxl-label`            | String  | `size/XXL`                     | The name of the label for a very, very large number of lines changed.        |
+| `color`                | String  | ![](./assets/box.svg) `4f348b` | The colour to use when creating labels.                                      |
+| `github-token`         | String  | [github.token][3]              | The token to use for managing labels.                                        |
+| `ignore-deleted-files` | Boolean | `false`                        | Set to ignore deleted files when calculating the number of lines changed.    |
+| `ignore-deleted-lines` | Boolean | `false`                        | Set to ignore deleted lines when calculating the number of lines changed.    |
+| `dry-run`              | Boolean | `false`                        | Skip creating labels and assigning a label to the PR.                        |
 
 Labels will be automatically created if they do not yet exist with using the
 configured name and colour, along with a hardcoded description. Once they have
