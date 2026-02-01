@@ -184,7 +184,6 @@ async function gatherExcludes({ baseRef, core, exec }) {
     "diff",
     `origin/${baseRef}...HEAD`,
     "--name-only",
-    "--no-renames",
   ]);
   core.endGroup();
 
@@ -238,6 +237,9 @@ async function gatherIgnores({ baseRef, core, exec, ignoreDeletedFiles }) {
 
 /**
  * Calculate the size of the change, returning the size and the files used in the calculation.
+ *
+ * Any file renames are normalised to the new filename. This matches the behaviour of
+ * "git diff --name-only" which discards filenames that no longer exist.
  */
 async function getSize({
   baseRef,
@@ -248,7 +250,7 @@ async function getSize({
   ignoreDeletedLines,
 }) {
   const ignoreAndExclude = [...excludes, ...ignores];
-  const diffOpts = ["--no-renames", "--numstat"];
+  const diffOpts = ["--numstat"];
 
   if (process.env.ignore_whitespace == "true") {
     diffOpts.push("--ignore-all-space");
@@ -269,12 +271,13 @@ async function getSize({
     .split(/\r?\n/)
     .filter((c) => c.length > 0)
     .map((c) => {
-      const parts = c.split(/\s+/);
+      const parts = c.split(/\s+/, 3);
+      const filename = parts[2].replace(/\{.*? => (.*?)\}/g, "$1");
 
       return {
         added: parseInt(parts[0]) || 0,
         removed: parseInt(parts[1]) || 0,
-        name: parts[2],
+        name: filename,
       };
     });
 
