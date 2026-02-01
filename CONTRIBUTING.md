@@ -1,14 +1,5 @@
 # Contributing
 
-This repository is a [composite GitHub action][1], with all logic defined in JavaScript using
-[`actions/github-script`][2]. This allows the JavaScript ecosystem for GutHub actions to be
-leveraged, without having to fully engage with the complexities of the JavaScript build system.
-However, it does mean that some dependency versions are locked to those bundled with
-`actions/github-script`.
-
-[1]: https://docs.github.com/en/actions/tutorials/create-actions/create-a-composite-action
-[2]: https://github.com/actions/github-script
-
 ## Reporting Issues
 
 Before submitting a new issue, please search for an existing or similar issue. If found, add your
@@ -36,9 +27,9 @@ Please ensure the rationale of the change is included, including the decision ma
 it. This can be particularly useful if the decision needs to be revisited in the weeks or months
 after the change was originally made.
 
-If the template was accidentally deleted, it can be found [here][3].
+If the template was accidentally deleted, it can be found [here][1].
 
-[3]: ./.github/PULL_REQUEST_TEMPLATE.md
+[1]: ./.github/PULL_REQUEST_TEMPLATE.md
 
 ### Size
 
@@ -53,6 +44,15 @@ ask that it be split up. However, larger pull requests may still be accepted if 
 place to split the change.
 
 ## Development
+
+This repository is a [composite GitHub action][2], with all logic defined in JavaScript using
+[`actions/github-script`][3]. This allows the JavaScript ecosystem for GutHub actions to be
+leveraged, without having to fully engage with the complexities of the JavaScript build system.
+However, it does mean that some dependency versions are locked to those bundled with
+`actions/github-script`.
+
+[2]: https://docs.github.com/en/actions/tutorials/create-actions/create-a-composite-action
+[3]: https://github.com/actions/github-script
 
 ### JavaScript
 
