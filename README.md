@@ -83,6 +83,7 @@ jobs:
 | `github-token`         | String  | [github.token][3]              | The token to use for managing labels.                                        |
 | `ignore-deleted-files` | Boolean | `false`                        | Set to ignore deleted files when calculating the number of lines changed.    |
 | `ignore-deleted-lines` | Boolean | `false`                        | Set to ignore deleted lines when calculating the number of lines changed.    |
+| `ignore-whitespace`    | Boolean | `true`                         | Ignore all whitespace changes when calculating the number of lines changed.  |
 | `dry-run`              | Boolean | `false`                        | Skip creating labels and assigning a label to the PR.                        |
 
 Labels will be automatically created if they do not yet exist with using the
