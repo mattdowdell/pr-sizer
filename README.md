@@ -2,9 +2,7 @@
 
 A GitHub Action for adding size labels to pull requests.
 
-<p align="center">
-<img src="https://raw.githubusercontent.com/mattdowdell/pr-sizer/example-screenshot/assets/example.jpg" width="600" />
-</p>
+<img src="https://raw.githubusercontent.com/mattdowdell/pr-sizer/example-screenshot/assets/example.jpg" width="750" />
 
 ## Description
 
