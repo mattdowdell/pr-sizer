@@ -73,6 +73,10 @@ inputs:
     description: "Whether to ignore whitespace changes at the end of a line. Set to 'true' to enable, or 'false' to disable."
     required: false
     default: "true"
+  dry-run:
+    description: "Skip creating labels and assigning a label to the pull request."
+    required: false
+    default: "false"
 
 outputs:
   label:
@@ -120,3 +124,4 @@ runs:
         ignore_deleted_files: ${{ inputs.ignore-deleted-files }}
         ignore_deleted_lines: ${{ inputs.ignore-deleted-lines }}
         ignore_whitespace: ${{ inputs.ignore-whitespace }}
+        dry_run: ${{ inputs.dry-run }}

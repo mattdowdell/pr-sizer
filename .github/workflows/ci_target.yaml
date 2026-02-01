@@ -1,0 +1,48 @@
+---
+name: CI (target)
+
+on:
+  pull_request_target:  # zizmor: ignore[dangerous-triggers]
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  size:
+    name: Size
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # pull-requests: write  # when dry-run=false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ github.head_ref }}
+
+      - name: Size
+        id: size
+        uses: ./
+        with:
+          dry-run: true
+
+      - name: Output
+        run: |
+          echo label=${LABEL}
+          echo size=${SIZE}
+          echo includes=${INCLUDES}
+          echo excludes=${EXCLUDES}
+          echo ignores=${IGNORES}
+        env:
+          LABEL: ${{ steps.size.outputs.label }}
+          SIZE: ${{ steps.size.outputs.size }}
+          INCLUDES: ${{ steps.size.outputs.includes }}
+          EXCLUDES: ${{ steps.size.outputs.excludes }}
+          IGNORES: ${{ steps.size.outputs.ignores }}
