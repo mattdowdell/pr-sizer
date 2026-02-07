@@ -269,6 +269,7 @@ async function getSize({
 
   let data = output.stdout
     .split(/\r?\n/)
+    .map((c) => c.trim())
     .filter((c) => c.length > 0)
     .map((c) => {
       const parts = c.split(/\s+/, 3);
