@@ -272,8 +272,8 @@ async function getSize({
     .map((c) => c.trim())
     .filter((c) => c.length > 0)
     .map((c) => {
-      const parts = c.split(/\s+/, 3);
-      const filename = parts[2].replace(/\{.*? => (.*?)\}/g, "$1");
+      const parts = c.split(/\s+/);
+      const filename = parts.slice(2).join(" ").replace(/\{.*? => (.*?)\}/g, "$1");
 
       return {
         added: parseInt(parts[0]) || 0,
