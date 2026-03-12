@@ -183,11 +183,15 @@ async function gatherExcludes({ baseRef, core, exec }) {
   const o1 = await exec.getExecOutput("git", [
     "diff",
     `origin/${baseRef}...HEAD`,
-    "--name-only",
+    "--name-status",
   ]);
   core.endGroup();
 
-  const files = o1.stdout.split(/\r?\n/).filter((n) => n.length > 0);
+  const files = o1.stdout
+    .split(/\r?\n/)
+    .filter((n) => n.length > 0)
+    .map((n) => n.split(/\s+/).slice(1))
+    .flat();
 
   if (!files.length) {
     return [];
