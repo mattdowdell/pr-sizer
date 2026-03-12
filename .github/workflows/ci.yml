@@ -118,7 +118,7 @@ jobs:
           persist-credentials: false
 
       - name: Lint actionlint
-        uses: reviewdog/action-actionlint@0d952c597ef8459f634d7145b0b044a9699e5e43 # v1.71.0
+        uses: reviewdog/action-actionlint@0d952c597ef8459f634d7145b0b044a9699e5e43  # v1.71.0
 
   zizmor:
     name: Zizmor Scan
