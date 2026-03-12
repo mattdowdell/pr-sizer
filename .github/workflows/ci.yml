@@ -106,6 +106,20 @@ jobs:
           go install github.com/google/yamlfmt/cmd/yamlfmt@latest
           yamlfmt -lint .
 
+  actionlint:
+    name: Lint Actions
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Lint actionlint
+        uses: reviewdog/action-actionlint@0d952c597ef8459f634d7145b0b044a9699e5e43  # v1.71.0
+
   zizmor:
     name: Zizmor Scan
     runs-on: ubuntu-latest
