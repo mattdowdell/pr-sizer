@@ -56,8 +56,12 @@ module.exports = async ({ context, core, exec, github }) => {
     const label = selectLabel({ size });
     core.setOutput("label", label.name);
 
+    console.debug(`calculated size: ${size}`);
+
     if (!dryRun) {
       await assignLabel({ context, github, label });
+    } else {
+      console.debug(`dry-run: skipping assigning label: ${label.name}`);
     }
   } catch (error) {
     if (error instanceof Error) {
