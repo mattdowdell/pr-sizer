@@ -47,7 +47,6 @@ module.exports = async ({ context, core, exec, github }) => {
       ignores,
       ignoreDeletedLines,
     });
-
     core.setOutput("size", size);
     core.setOutput("includes", includes.join(" "));
 
