@@ -118,7 +118,7 @@ jobs:
           persist-credentials: false
 
       - name: Lint actionlint
-        uses: reviewdog/action-actionlint@a8ac3eea598697a830f7d8e701fc9fcbfde88974  # v1.80.0
+        uses: reviewdog/action-actionlint@619a81ec64ff8c0211cd6146eb2b21e8f1d7f440  # v1.81.1
         with:
           fail_level: any
 
